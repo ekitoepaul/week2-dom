@@ -15,3 +15,21 @@ function printFooter() {
 // Call the function
 printHeader();
 printFooter();
+
+// Function to print a receipt line
+function printLine(item, amount) {
+    console.log(item + " ................ KSh " + amount);
+}
+
+// Print three receipt lines
+printLine("Transaction Fee", 50);
+printLine("Withdrawal Fee", 30);
+printLine("Service Charge", 20);
+
+// Function to print the total amount
+function printTotal(label, amount) {
+    console.log(label + ": KSh " + amount.toFixed(2));
+}
+
+// Call the function
+printTotal("Total Amount", 1500);
