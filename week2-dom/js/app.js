@@ -57,3 +57,43 @@ console.log(isValidPhone("0717544278"));
 console.log(isValidPhone("254790151004"));
 console.log(isValidPhone("12345"));
 
+// 1. Validate a phone number using guard clauses
+
+function checkPhone(typed) {
+  // Guard clause: missing input
+  if (!typed) {
+    return "Phone number is missing.";
+  }
+
+  // Remove spaces before checking length
+  const cleaned = typed.replaceAll(" ", "");
+
+  // Guard clause: wrong length after removing spaces
+  if (cleaned.length !== 10) {
+    return "Phone number must have exactly 10 digits.";
+  }
+
+  // Guard clause: wrong start
+  if (!cleaned.startsWith("07")) {
+    return "Phone number must start with 07.";
+  }
+
+  // Valid phone number
+  return "";
+}
+
+// Test lines
+console.log(checkPhone(""));                 // "Phone number is missing."
+console.log(checkPhone("0717544278"));        // "Phone number must have exactly 10 digits."
+console.log(checkPhone("07 9015 1004"));     // ""
+console.log(checkPhone("0812345678"));       // "Phone number must start with 07."
+console.log(checkPhone("0717544278"));       // ""
+
+
+// 2. Print a message 2 seconds after the receipt
+
+console.log("Receipt printed.");
+
+setTimeout(() => { 
+  console.log("Your order is on its way");
+}, 2000);
