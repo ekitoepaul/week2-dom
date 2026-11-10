@@ -59,22 +59,31 @@ console.log(isValidPhone("12345"));
 
 // 1. Validate a phone number using guard clauses
 
+// Arrow helper: remove all spaces
+const removeSpaces = (text) => text.replaceAll(" ", "");
+
+// Arrow helper: check if the phone number has exactly 10 digits
+const hasTenDigits = (text) => text.length === 10;
+
+// Arrow helper: check if the phone number starts with 07
+const startsWith07 = (text) => text.startsWith("07");
+
 function checkPhone(typed) {
   // Guard clause: missing input
   if (!typed) {
     return "Phone number is missing.";
   }
 
-  // Remove spaces before checking length
-  const cleaned = typed.replaceAll(" ", "");
+  // Remove spaces using the arrow helper
+  const cleaned = removeSpaces(typed);
 
   // Guard clause: wrong length after removing spaces
-  if (cleaned.length !== 10) {
+  if (!hasTenDigits(cleaned)) {
     return "Phone number must have exactly 10 digits.";
   }
 
   // Guard clause: wrong start
-  if (!cleaned.startsWith("07")) {
+  if (!startsWith07(cleaned)) {
     return "Phone number must start with 07.";
   }
 
@@ -83,17 +92,17 @@ function checkPhone(typed) {
 }
 
 // Test lines
-console.log(checkPhone(""));                 // "Phone number is missing."
-console.log(checkPhone("0717544278"));        // "Phone number must have exactly 10 digits."
-console.log(checkPhone("07 9015 1004"));     // ""
-console.log(checkPhone("0812345678"));       // "Phone number must start with 07."
-console.log(checkPhone("0717544278"));       // ""
+console.log(checkPhone(""));                  // "Phone number is missing."
+console.log(checkPhone("0717544278"));        // ""
+console.log(checkPhone("07 9015 1004"));      // ""
+console.log(checkPhone("0812345678"));        // "Phone number must start with 07."
+console.log(checkPhone("071754427"));         // "Phone number must have exactly 10 digits."
 
 
 // 2. Print a message 2 seconds after the receipt
 
 console.log("Receipt printed.");
 
-setTimeout(() => { 
+setTimeout(() => {
   console.log("Your order is on its way");
 }, 2000);
