@@ -1,108 +1,105 @@
-function printHeader() {
-  console.log('MAMA MBOGA FRESH');
-  console.log('Kangemi Market, Stall 14');
-  console.log('-'.repeat(24));
-}
+// Select page elements
+const heading = document.querySelector("#shop-name");
+const statusEl = document.querySelector("#status");
+const productName = document.querySelector("#product-name");
+const productPrice = document.querySelector("#product-price");
+const productImage = document.querySelector("#product-image");
+const basketEl = document.querySelector("#basket");
+const totalEl = document.querySelector("#total");
 
-// Function to print the footer
-function printFooter() {
-    console.log("------------------------------");
-    console.log("Thank you for using our program!");
-    console.log("Developed by Pesa Haraka");
-    console.log("------------------------------");
-}
+// Log the selected elements
+console.log("Heading:", heading);
+console.log("Status paragraph:", statusEl);
+console.log("Product name:", productName);
+console.log("Product price:", productPrice);
+console.log("Product image:", productImage);
 
-// Call the function
-printHeader();
-printFooter();
+// Calculate VAT-inclusive price
+function calculateVat(price, vatRate = 0.16) {
+  const numericPrice = Number(price);
 
-// Function to print a receipt line
-function printLine(item, amount) {
-    console.log(item + " ................ KSh " + amount);
-}
-
-// Print three receipt lines
-printLine("Transaction Fee", 50);
-printLine("Withdrawal Fee", 30);
-printLine("Service Charge", 20);
-
-// Function to print the total amount
-function printTotal(label, amount) {
-    console.log(label + ": KSh " + amount.toFixed(2));
-}
-
-// Call the function
-printTotal("Total Amount", 1500);
-
-//functio to calculate VAT
-function calculateVAT(amount) {
-    const vatrate = 0.16;
-    const vat = amount * vatrate;
-    return vat;
-}
-
-// Test the function
-console.log("VAT: KSh " + calculateVAT(1000).toFixed(2));
-
-//function to validate the phone number
-function isValidPhone(phone) {
-    const cleanPhone = phone.replace(/\s+/g, "");
-
-    const phonePattern = /^(?:07|01)\d{8}$|^(?:\+254|254)[17]\d{8}$/;
-
-    return phonePattern.test(cleanPhone);
-}
-// Test the function
-console.log(isValidPhone("0717544278"));
-console.log(isValidPhone("254790151004"));
-console.log(isValidPhone("12345"));
-
-// 1. Validate a phone number using guard clauses
-
-// Arrow helper: remove all spaces
-const removeSpaces = (text) => text.replaceAll(" ", "");
-
-// Arrow helper: check if the phone number has exactly 10 digits
-const hasTenDigits = (text) => text.length === 10;
-
-// Arrow helper: check if the phone number starts with 07
-const startsWith07 = (text) => text.startsWith("07");
-
-function checkPhone(typed) {
-  // Guard clause: missing input
-  if (!typed) {
-    return "Phone number is missing.";
+  if (Number.isNaN(numericPrice)) {
+    return 0;
   }
 
-  // Remove spaces using the arrow helper
-  const cleaned = removeSpaces(typed);
-
-  // Guard clause: wrong length after removing spaces
-  if (!hasTenDigits(cleaned)) {
-    return "Phone number must have exactly 10 digits.";
-  }
-
-  // Guard clause: wrong start
-  if (!startsWith07(cleaned)) {
-    return "Phone number must start with 07.";
-  }
-
-  // Valid phone number
-  return "";
+  return numericPrice * (1 + vatRate);
 }
 
-// Test lines
-console.log(checkPhone(""));                  // "Phone number is missing."
-console.log(checkPhone("0717544278"));        // ""
-console.log(checkPhone("07 9015 1004"));      // ""
-console.log(checkPhone("0812345678"));        // "Phone number must start with 07."
-console.log(checkPhone("071754427"));         // "Phone number must have exactly 10 digits."
+// Format an amount as Kenyan shillings
+function formatKsh(amount) {
+  return `KSh ${Number(amount).toFixed(2)}`;
+}
 
+// Show a temporary message below the heading
+function showMessage(text) {
+  const message = document.createElement("p");
+  message.className = "message";
+  message.textContent = text;
 
-// 2. Print a message 2 seconds after the receipt
+  heading.after(message);
 
-console.log("Receipt printed.");
+  setTimeout(() => {
+    message.remove();
+  }, 3000);
+}
 
-setTimeout(() => {
-  console.log("Your order is on its way");
-}, 2000);
+// Add one item to the basket and return its total
+function addBasketLine(name, kilos, pricePerKg) {
+  const lineTotal = kilos * pricePerKg;
+
+  const listItem = document.createElement("li");
+  listItem.textContent =
+    `${name}, ${kilos} kg: ${formatKsh(lineTotal)}`;
+
+  basketEl.append(listItem);
+
+  return lineTotal;
+}
+
+// Opening hours
+const OPENING_HOUR = 7;
+const CLOSING_HOUR = 19;
+
+function isOpen(hour) {
+  return hour >= OPENING_HOUR && hour < CLOSING_HOUR;
+}
+
+// Update the shop name
+heading.textContent = "Mama Mboga Fresh: Avocado Day";
+
+// Read the tomato price and show it with 16% VAT
+const tomatoPrice = productPrice.textContent;
+const tomatoPriceWithVat = calculateVat(tomatoPrice);
+
+// Swap the product to onions
+productName.textContent = "Onions";
+productPrice.textContent = "80";
+productImage.src = "images/Fresh_Onion.jpg";
+productImage.alt = "Fresh brown onions";
+
+// Add basket items
+let total = 0;
+total += addBasketLine("Tomatoes", 3, 120);
+total += addBasketLine("Onions", 2, 80);
+total += addBasketLine("Sukuma", 1, 20);
+
+totalEl.textContent = formatKsh(total);
+
+// Set the open or closed status
+const hour = new Date().getHours();
+
+if (isOpen(hour)) {
+  statusEl.textContent = "Open now";
+  statusEl.classList.add("open");
+  showMessage("Welcome to Mama Mboga Fresh! We are open.");
+} else {
+  statusEl.textContent = "Closed. We open at 7am.";
+  statusEl.classList.add("closed");
+  showMessage("Sorry, we are currently closed.");
+}
+
+// Log the final details
+console.log("Updated product name:", productName.textContent);
+console.log("Updated product price:", productPrice.textContent);
+console.log("Updated image source:", productImage.src);
+console.log("Basket total:", formatKsh(total));
