@@ -1,0 +1,18 @@
+body {
+  font-family: system-ui, sans-serif;
+  background: #f6f7f2;
+  margin: 0;
+}
+.container { max-width: 40rem; margin: 0 auto; padding: 1.5rem; }
+.card {
+  background: #fff;
+  border-radius: 0.75rem;
+  padding: 1rem 1.25rem;
+  margin-bottom: 1rem;
+}
+.card img { max-width: 100%; border-radius: 0.5rem; }
+.status { font-weight: 600; }
+.open { color: #15803d; }
+.closed { color: #b91c1c; }
+.highlight { outline: 3px solid #f59e0b; }
+.hidden { display: none; }
