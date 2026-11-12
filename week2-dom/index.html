@@ -1,44 +1,75 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Mama Mboga Fresh: Order</title>
-  <link rel="stylesheet" href="css/styles.css">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-<body>
-  <main class="container">
-    <h1 id="shop-name">Mama Mboga Fresh</h1>
-    <p class="tagline">Fresh vegetables from Kangemi market</p>
+    <title>Mama Mboga Fresh: Order</title>
 
-    <p id="status" class="status">Checking opening hours...</p>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
 
-    <section class="card" id="product">
-      <h2 class="product-name" id="product-name">Tomatoes</h2>
+  <body>
+    <main class="container">
+      <!-- Shop header -->
+      <h1 id="shop-name">Mama Mboga Fresh</h1>
 
-      <p>
-        KSh <span class="price" id="product-price">120</span> per kg
-      </p>
+      <p class="tagline">Fresh vegetables from Kangemi market</p>
 
-      <img
-        src="images/tomato.jpg"
-        alt="Ripe red tomatoes"
-        id="product-image"
-      >
-    </section>
+      <p id="status" class="status">Checking opening hours...</p>
 
-    <section class="card">
-      <h2>Shopping Basket</h2>
+      <!-- Product section -->
+      <section class="card" id="product">
+        <h2 class="product-name" id="product-name">Tomatoes</h2>
 
-      <ul id="basket"></ul>
+        <p>KSh <span class="price" id="product-price">120</span> per kg</p>
 
-      <p class="total">
-        Total: <strong id="total">KSh 0.00</strong>
-      </p>
-    </section>
-  </main>
+        <img
+          src="images/tomato.jpg"
+          alt="Ripe red tomatoes"
+          id="product-image"
+          width="200"
+        />
 
-  <script src="js/app.js" defer></script>
-</body>
+        <!-- Quantity stepper -->
+        <div class="stepper">
+          <button type="button" id="minus-btn" aria-label="Remove one kilo">
+            -
+          </button>
+
+          <span id="qty">0</span> kg
+
+          <button type="button" id="plus-btn" aria-label="Add one kilo">
+            +
+          </button>
+        </div>
+
+        <!-- Cost display -->
+        <p>Cost: <strong id="cost">KSh 0.00</strong></p>
+
+        <!-- Add to basket -->
+        <button type="button" id="add-btn">Add 1 kg to basket</button>
+      </section>
+
+      <!-- Shopping basket -->
+      <section class="card" id="shopping-basket">
+        <h2>Shopping Basket</h2>
+
+        <!-- Basket items -->
+        <ul id="basket"></ul>
+
+        <!-- Basket total -->
+        <p class="total">Total: <strong id="total">KSh 0.00</strong></p>
+
+        <!-- Free delivery message -->
+        <p id="delivery-message" aria-live="polite"></p>
+
+        <!-- Clear basket button -->
+        <button type="button" id="clear-btn">Clear Basket</button>
+      </section>
+    </main>
+
+    <!-- JavaScript -->
+    <script src="js/app.js" defer></script>
+  </body>
 </html>
