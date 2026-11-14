@@ -3,13 +3,162 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Pesa Haraka Fee Calculator</title>
+    <meta
+      name="description"
+      content="Pesa Haraka transaction fee calculator and receipt generator."
+    />
+    <title>Pesa Haraka | Transaction Calculator</title>
     <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/app.js" defer></script>
   </head>
   <body>
-    <h1>Pesa Haraka Fee Calculator</h1>
-    <p>Open the console to see the fee calculations (F12, then Console).</p>
+    <header class="site-header">
+      <div class="header-inner">
+        <a class="brand" href="#" aria-label="Pesa Haraka home">
+          <span class="brand-mark" aria-hidden="true">PH</span>
+          <span>Pesa Haraka</span>
+        </a>
+        <span class="header-tagline">Fast. Simple. Transparent.</span>
+      </div>
+    </header>
 
-    <script src="js/app.js"></script>
+    <main class="container">
+      <section class="intro" aria-labelledby="page-title">
+        <p class="eyebrow">MOBILE MONEY</p>
+        <h1 id="page-title">Make your transaction</h1>
+        <p>
+          Enter your details to preview the fee and generate a transaction
+          receipt.
+        </p>
+      </section>
+
+      <section id="form-panel" class="panel" aria-labelledby="form-title">
+        <div class="panel-heading">
+          <div>
+            <h2 id="form-title">Transaction details</h2>
+            <p>All fields are required.</p>
+          </div>
+          <span class="secure-label"
+            ><span aria-hidden="true">●</span> Secure form</span
+          >
+        </div>
+
+        <form id="transaction-form" novalidate>
+          <div class="field">
+            <label for="full-name">Full name</label>
+            <input
+              id="full-name"
+              name="fullName"
+              type="text"
+              autocomplete="name"
+              placeholder="e.g. Amina Wanjiku"
+              required
+              aria-describedby="name-help name-error"
+            />
+            <small id="name-help" class="field-help"
+              >Enter the customer's full name.</small
+            >
+            <p id="name-error" class="error-message" aria-live="polite"></p>
+          </div>
+
+          <div class="field">
+            <label for="phone-number">Phone number</label>
+            <input
+              id="phone-number"
+              name="phoneNumber"
+              type="tel"
+              inputmode="tel"
+              autocomplete="tel-national"
+              placeholder="0712345678"
+              required
+              aria-describedby="phone-help phone-error"
+            />
+            <small id="phone-help" class="field-help"
+              >Use 10 digits beginning with 07 or 01.</small
+            >
+            <p id="phone-error" class="error-message" aria-live="polite"></p>
+          </div>
+
+          <div class="field">
+            <label for="transaction-type">Transaction type</label>
+            <select
+              id="transaction-type"
+              name="transactionType"
+              required
+              aria-describedby="type-error"
+            >
+              <option value="">Choose a transaction</option>
+              <option value="send">Send money</option>
+              <option value="withdraw">Withdraw cash</option>
+              <option value="business">Pay a business</option>
+            </select>
+            <p id="type-error" class="error-message" aria-live="polite"></p>
+          </div>
+
+          <div class="field">
+            <label for="amount">Amount (KSh)</label>
+            <input
+              id="amount"
+              name="amount"
+              type="number"
+              inputmode="decimal"
+              min="0.01"
+              max="150000"
+              step="0.01"
+              placeholder="e.g. 2500"
+              required
+              aria-describedby="amount-help amount-error"
+            />
+            <small id="amount-help" class="field-help"
+              >Maximum transaction amount is KSh 150,000.</small
+            >
+            <p id="amount-error" class="error-message" aria-live="polite"></p>
+            <p
+              id="fee-preview"
+              class="fee-preview"
+              role="status"
+              aria-live="polite"
+            >
+              Enter an amount and select a transaction to preview the fee.
+            </p>
+          </div>
+
+          <button class="button button-primary" type="submit">
+            Confirm transaction
+          </button>
+        </form>
+      </section>
+
+      <section
+        id="receipt-panel"
+        class="panel receipt-panel"
+        aria-labelledby="receipt-title"
+        hidden
+      >
+        <div class="receipt-success">
+          <span class="success-icon" aria-hidden="true">✓</span>
+          <p>Transaction confirmed</p>
+        </div>
+        <div id="receipt-content" class="receipt-paper">
+          <h2 id="receipt-title">PESA HARAKA RECEIPT</h2>
+          <p class="receipt-subtitle">Transaction confirmation</p>
+          <div class="receipt-rule"></div>
+          <dl id="receipt-details" class="receipt-details"></dl>
+          <div class="receipt-rule"></div>
+          <p class="receipt-thank-you">Thank you for using Pesa Haraka!</p>
+        </div>
+        <button
+          id="new-transaction"
+          class="button button-primary"
+          type="button"
+        >
+          New transaction
+        </button>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <p>© 2026 Pesa Haraka. Demo transaction calculator.</p>
+    </footer>
   </body>
 </html>

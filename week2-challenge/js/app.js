@@ -1,200 +1,378 @@
 // -----------------------------------------
-// PESA HARAKA FEE CALCULATOR
+// PESA HARAKA - WEB TRANSACTION CALCULATOR
 // -----------------------------------------
 
-// Fixed transaction limits
+// 1. Fixed limits and DOM references (selected once).
 const MIN_WITHDRAWAL = 50;
 const MAX_AMOUNT = 150000;
 
-let errorMessage = "";
+const transactionForm = document.querySelector("#transaction-form");
+const formPanel = document.querySelector("#form-panel");
+const receiptPanel = document.querySelector("#receipt-panel");
+const receiptDetails = document.querySelector("#receipt-details");
+const feePreview = document.querySelector("#fee-preview");
+const newTransactionButton = document.querySelector("#new-transaction");
 
-// 1. Ask for customer's full name
-const nameInput = prompt("Enter your full name:");
-const fullName = nameInput ? nameInput.trim() : "";
+const nameInput = document.querySelector("#full-name");
+const phoneInput = document.querySelector("#phone-number");
+const typeInput = document.querySelector("#transaction-type");
+const amountInput = document.querySelector("#amount");
 
-if (fullName === "") {
-  errorMessage = "Transaction cancelled: A valid customer name is required.";
-}
+const fields = {
+  fullName: { input: nameInput, error: document.querySelector("#name-error") },
+  phoneNumber: {
+    input: phoneInput,
+    error: document.querySelector("#phone-error"),
+  },
+  transactionType: {
+    input: typeInput,
+    error: document.querySelector("#type-error"),
+  },
+  amount: {
+    input: amountInput,
+    error: document.querySelector("#amount-error"),
+  },
+};
 
-// 2. Ask for phone number
-let phoneNumber = "";
+let currentView = "form";
 
-if (errorMessage === "") {
-  const phoneInput = prompt("Enter your phone number:");
-  phoneNumber = phoneInput === null ? "" : phoneInput.replaceAll(" ", "");
-
-  const hasValidPrefix =
-    phoneNumber.startsWith("07") || phoneNumber.startsWith("01");
-
-  const isAllDigits = /^\d+$/.test(phoneNumber);
-
-  if (phoneNumber.length !== 10 || !hasValidPrefix || !isAllDigits) {
-    errorMessage =
-      "Invalid phone number. Enter 10 digits starting with 07 or 01.";
+// 2. Pure fee function: no DOM access or page updates.
+function calculateFee(type, amount) {
+  if (!Number.isFinite(amount) || amount <= 0 || amount > MAX_AMOUNT) {
+    return null;
   }
+
+  if (!["send", "withdraw", "business"].includes(type)) {
+    return null;
+  }
+
+  if (type === "withdraw" && amount < MIN_WITHDRAWAL) {
+    return null;
+  }
+
+  if (type === "business") {
+    return 0;
+  }
+
+  if (amount <= 100) {
+    return type === "withdraw" ? 11 : 0;
+  }
+  if (amount <= 1000) {
+    return type === "send" ? 13 : 29;
+  }
+  if (amount <= 5000) {
+    return type === "send" ? 53 : 69;
+  }
+  if (amount <= 20000) {
+    return type === "send" ? 87 : 185;
+  }
+
+  return type === "send" ? 108 : 309;
 }
 
-if (errorMessage === "") {
-  // Format phone number to international format
-  const formattedPhone = "254" + phoneNumber.substring(1);
+// 3. Field checkers return an empty string when valid, or an error message.
+function checkName(value) {
+  const name = value.trim();
+  if (!name) return "Please enter your full name.";
+  if (name.length < 2) return "Name must contain at least 2 characters.";
+  return "";
+}
 
-  // 3. Ask for transaction type
-  const transactionInput = prompt(
-    "Select transaction type:\n" +
-      "1. Send money\n" +
-      "2. Withdraw cash\n" +
-      "3. Pay a business",
-  );
+function normalizePhone(value) {
+  return value.replace(/\s+/g, "");
+}
 
-  if (transactionInput === null || transactionInput.trim() === "") {
-    errorMessage = "Transaction cancelled: Select a transaction type.";
+function checkPhone(value) {
+  const phone = normalizePhone(value);
+  if (!phone) return "Please enter your phone number.";
+  if (!/^(07|01)\d{8}$/.test(phone)) {
+    return "Enter 10 digits starting with 07 or 01.";
+  }
+  return "";
+}
+
+function checkAmount(value, type) {
+  if (value.trim() === "") return "Please enter the transaction amount.";
+
+  const amount = Number(value);
+  if (!Number.isFinite(amount)) return "Enter a valid number.";
+  if (amount <= 0) return "Amount must be greater than zero.";
+  if (amount > MAX_AMOUNT) return "Maximum transaction amount is KSh 150,000.";
+  if (type === "withdraw" && amount < MIN_WITHDRAWAL) {
+    return "Minimum withdrawal amount is KSh 50.";
+  }
+  return "";
+}
+
+function checkTransactionType(value) {
+  if (!value) return "Please select a transaction type.";
+  if (!["send", "withdraw", "business"].includes(value)) {
+    return "Please select a valid transaction type.";
+  }
+  return "";
+}
+
+// 4. Shared formatting helpers.
+function formatMoney(value) {
+  return value.toLocaleString("en-KE", {
+    minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
+    maximumFractionDigits: 2,
+  });
+}
+
+function getTransactionLabel(type) {
+  const labels = {
+    send: "Send money",
+    withdraw: "Withdraw cash",
+    business: "Pay a business",
+  };
+  return labels[type] || "Unknown transaction";
+}
+
+// 5. Accessible field error handling.
+function showFieldError(fieldName, message) {
+  const field = fields[fieldName];
+  field.error.textContent = message;
+
+  if (message) {
+    field.input.setAttribute("aria-invalid", "true");
+    field.input.setAttribute(
+      "aria-describedby",
+      getDescribedBy(fieldName, true),
+    );
   } else {
-    const transactionChoice = Number(transactionInput);
-
-    let transactionType = "";
-
-    // Switch statement for transaction selection
-    switch (transactionChoice) {
-      case 1:
-        transactionType = "Send Money";
-        break;
-
-      case 2:
-        transactionType = "Withdraw Cash";
-        break;
-
-      case 3:
-        transactionType = "Pay a Business";
-        break;
-
-      default:
-        errorMessage = "Unknown transaction type. Select 1, 2 or 3.";
-    }
-
-    if (errorMessage === "") {
-      // 4. Ask for transaction amount
-      const amountInput = prompt("Enter transaction amount in KSh:");
-
-      if (amountInput === null || amountInput.trim() === "") {
-        errorMessage = "Amount is required. Transaction cancelled.";
-      } else {
-        const amount = Number(amountInput);
-
-        // Calculate the fee OUTSIDE any if statement.
-        // It is safe to calculate even if the amount is invalid.
-        const getTransactionFee = (choice, value) => {
-          if (value <= 100) {
-            if (choice === 2) {
-              return 11;
-            }
-          } else if (value <= 1000) {
-            if (choice === 1) {
-              return 13;
-            } else if (choice === 2) {
-              return 29;
-            }
-          } else if (value <= 5000) {
-            if (choice === 1) {
-              return 53;
-            } else if (choice === 2) {
-              return 69;
-            }
-          } else if (value <= 20000) {
-            if (choice === 1) {
-              return 87;
-            } else if (choice === 2) {
-              return 185;
-            }
-          } else if (value <= MAX_AMOUNT) {
-            if (choice === 1) {
-              return 108;
-            } else if (choice === 2) {
-              return 309;
-            }
-          }
-
-          return 0;
-        };
-
-        const transactionFee = getTransactionFee(transactionChoice, amount);
-        const totalAmount = amount + transactionFee;
-
-        // First-level else-if chain: amount validation
-        if (Number.isNaN(amount)) {
-          errorMessage = "Invalid amount. Please enter a valid number.";
-        } else if (amount <= 0) {
-          errorMessage = "Invalid amount. Amount must be greater than zero.";
-        } else if (amount > MAX_AMOUNT) {
-          errorMessage = "Transaction refused: Maximum amount is KSh 150,000.";
-        } else if (transactionChoice === 2 && amount < MIN_WITHDRAWAL) {
-          errorMessage = "Transaction refused: Minimum withdrawal is KSh 50.";
-        } else {
-          // Second-level check: transaction type
-          if (transactionChoice === 1) {
-            transactionType = "Send Money";
-          } else if (transactionChoice === 2) {
-            transactionType = "Withdraw Cash";
-          } else if (transactionChoice === 3) {
-            transactionType = "Pay a Business";
-          } else {
-            errorMessage = "Unknown transaction type. Select 1, 2 or 3.";
-          }
-        }
-
-        if (errorMessage === "") {
-          // Generate random six-digit reference
-          const referenceNumber = Math.floor(100000 + Math.random() * 900000);
-
-          // Format numbers with thousands separators
-          const formatMoney = (value) => value.toLocaleString("en-KE");
-
-          // Ternary operator for free transactions
-          const feeMessage =
-            transactionFee === 0
-              ? "FREE"
-              : "KSh " + formatMoney(transactionFee);
-
-          // Prepare receipt
-          const receipt = `
-========================================
-          PESA HARAKA RECEIPT
-========================================
-Customer Name : ${fullName.toUpperCase()}
-Phone Number  : ${formattedPhone}
-Reference No. : ${referenceNumber}
-----------------------------------------
-Transaction   : ${transactionType}
-----------------------------------------
-${"Description".padEnd(22)}${"Amount (KSh)".padStart(12)}
-${"Transaction".padEnd(22)}${formatMoney(amount).padStart(12)}
-${"Transaction Fee".padEnd(22)}${feeMessage.padStart(12)}
-----------------------------------------
-${"TOTAL".padEnd(22)}${formatMoney(totalAmount).padStart(12)}
-========================================
-       Thank you for using Pesa Haraka!
-========================================
-`;
-
-          // Final decision: error OR successful receipt
-          if (errorMessage !== "") {
-            console.log(errorMessage);
-            alert(errorMessage);
-          } else {
-            console.log(receipt);
-            alert(
-              `Done. Fee: ${feeMessage}, total: KSh ${formatMoney(
-                totalAmount,
-              )}. See the console for your receipt.`,
-            );
-          }
-        }
-      }
-    }
+    field.input.removeAttribute("aria-invalid");
+    field.input.setAttribute(
+      "aria-describedby",
+      getDescribedBy(fieldName, false),
+    );
   }
 }
 
-// Final error display for earlier failures
-if (errorMessage !== "") {
-  console.log(errorMessage);
-  alert(errorMessage);
+function getDescribedBy(fieldName, includeError) {
+  const helpIds = {
+    fullName: "name-help",
+    phoneNumber: "phone-help",
+    transactionType: "",
+    amount: "amount-help",
+  };
+  const errorIds = {
+    fullName: "name-error",
+    phoneNumber: "phone-error",
+    transactionType: "type-error",
+    amount: "amount-error",
+  };
+
+  return [helpIds[fieldName], includeError ? errorIds[fieldName] : ""]
+    .filter(Boolean)
+    .join(" ");
 }
+
+function clearFieldError(fieldName) {
+  showFieldError(fieldName, "");
+}
+
+function validateAllFields() {
+  const errors = {
+    fullName: checkName(nameInput.value),
+    phoneNumber: checkPhone(phoneInput.value),
+    transactionType: checkTransactionType(typeInput.value),
+    amount: checkAmount(amountInput.value, typeInput.value),
+  };
+
+  Object.entries(errors).forEach(([fieldName, message]) => {
+    showFieldError(fieldName, message);
+  });
+
+  const firstInvalid = Object.keys(errors).find(
+    (fieldName) => errors[fieldName],
+  );
+  if (firstInvalid) {
+    fields[firstInvalid].input.focus();
+    return false;
+  }
+
+  return true;
+}
+
+// 6. Live fee preview uses the same pure fee function as the receipt.
+function updateFeePreview() {
+  const amountText = amountInput.value;
+  const type = typeInput.value;
+
+  if (amountText.trim() === "" || !type) {
+    feePreview.textContent =
+      "Enter an amount and select a transaction to preview the fee.";
+    feePreview.classList.remove("fee-preview-error");
+    return;
+  }
+
+  const amountError = checkAmount(amountText, type);
+  if (amountError) {
+    feePreview.textContent = amountError;
+    feePreview.classList.add("fee-preview-error");
+    return;
+  }
+
+  const fee = calculateFee(type, Number(amountText));
+  if (fee === null) {
+    feePreview.textContent = "The fee cannot be calculated for these details.";
+    feePreview.classList.add("fee-preview-error");
+    return;
+  }
+
+  feePreview.textContent =
+    fee === 0 ? "Fee: FREE" : `Fee: KSh ${formatMoney(fee)}`;
+  feePreview.classList.remove("fee-preview-error");
+}
+
+// 7. Create receipt safely using createElement and textContent only.
+function appendReceiptRow(label, value, emphasized = false) {
+  const row = document.createElement("div");
+  row.className = emphasized ? "receipt-row receipt-total" : "receipt-row";
+
+  const term = document.createElement("dt");
+  term.textContent = label;
+
+  const description = document.createElement("dd");
+  description.textContent = value;
+
+  row.append(term, description);
+  receiptDetails.append(row);
+}
+
+function buildReceipt(transaction) {
+  receiptDetails.replaceChildren();
+
+  appendReceiptRow("Customer", transaction.fullName.toUpperCase());
+  appendReceiptRow("Phone", transaction.formattedPhone);
+  appendReceiptRow("Reference", transaction.reference);
+  appendReceiptRow("Date & time", transaction.dateTime);
+  appendReceiptRow("Transaction", getTransactionLabel(transaction.type));
+  appendReceiptRow("Amount", `KSh ${formatMoney(transaction.amount)}`);
+  appendReceiptRow(
+    "Transaction fee",
+    transaction.fee === 0 ? "FREE" : `KSh ${formatMoney(transaction.fee)}`,
+  );
+  appendReceiptRow("TOTAL", `KSh ${formatMoney(transaction.total)}`, true);
+}
+
+// 8. One function controls which panel is visible.
+function renderView() {
+  const showingReceipt = currentView === "receipt";
+  formPanel.hidden = showingReceipt;
+  receiptPanel.hidden = !showingReceipt;
+  if (showingReceipt) {
+    document.querySelector("#receipt-title").focus();
+  } else {
+    nameInput.focus();
+  }
+}
+
+function createTransaction() {
+  const amount = Number(amountInput.value);
+  const fee = calculateFee(typeInput.value, amount);
+  const phone = normalizePhone(phoneInput.value);
+  const formattedPhone = `254${phone.substring(1)}`;
+
+  return {
+    fullName: nameInput.value.trim(),
+    formattedPhone,
+    type: typeInput.value,
+    amount,
+    fee,
+    total: amount + fee,
+    reference: String(Math.floor(100000 + Math.random() * 900000)),
+    dateTime: new Date().toLocaleString("en-KE"),
+  };
+}
+
+// 9. Submit event: prevent browser reload, validate all, then show receipt.
+transactionForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  if (!validateAllFields()) {
+    updateFeePreview();
+    return;
+  }
+
+  const transaction = createTransaction();
+  buildReceipt(transaction);
+  currentView = "receipt";
+  renderView();
+});
+
+// 10. Live updates and immediate clearing of corrected field errors.
+nameInput.addEventListener("input", () => {
+  if (nameInput.getAttribute("aria-invalid") === "true") {
+    showFieldError("fullName", checkName(nameInput.value));
+  }
+});
+
+phoneInput.addEventListener("input", () => {
+  if (phoneInput.getAttribute("aria-invalid") === "true") {
+    showFieldError("phoneNumber", checkPhone(phoneInput.value));
+  }
+});
+
+amountInput.addEventListener("input", () => {
+  if (amountInput.getAttribute("aria-invalid") === "true") {
+    showFieldError("amount", checkAmount(amountInput.value, typeInput.value));
+  }
+  updateFeePreview();
+});
+
+typeInput.addEventListener("change", () => {
+  if (typeInput.getAttribute("aria-invalid") === "true") {
+    showFieldError("transactionType", checkTransactionType(typeInput.value));
+  }
+  if (amountInput.getAttribute("aria-invalid") === "true") {
+    showFieldError("amount", checkAmount(amountInput.value, typeInput.value));
+  }
+  updateFeePreview();
+});
+
+// 11. Reset the form and return to the form view.
+newTransactionButton.addEventListener("click", () => {
+  transactionForm.reset();
+
+  Object.keys(fields).forEach((fieldName) => clearFieldError(fieldName));
+  feePreview.textContent =
+    "Enter an amount and select a transaction to preview the fee.";
+  feePreview.classList.remove("fee-preview-error");
+  receiptDetails.replaceChildren();
+
+  currentView = "form";
+  renderView();
+});
+
+// 12. Fee function boundary checks. Open the browser console to see results.
+console.assert(calculateFee("send", 100) === 0, "Send KSh 100 should be FREE");
+console.assert(
+  calculateFee("withdraw", 100) === 11,
+  "Withdrawal KSh 100 should cost KSh 11",
+);
+console.assert(
+  calculateFee("send", 101) === 13,
+  "Send KSh 101 should cost KSh 13",
+);
+console.assert(calculateFee("send", 1000) === 13, "Send KSh 1,000 boundary");
+console.assert(calculateFee("send", 1001) === 53, "Send KSh 1,001 boundary");
+console.assert(
+  calculateFee("withdraw", 49) === null,
+  "Withdrawal below KSh 50 is not allowed",
+);
+console.assert(
+  calculateFee("withdraw", 50) === 11,
+  "Withdrawal KSh 50 is allowed",
+);
+console.assert(calculateFee("send", 20000) === 87, "Send KSh 20,000 boundary");
+console.assert(calculateFee("send", 20001) === 108, "Send KSh 20,001 boundary");
+console.assert(
+  calculateFee("business", 150000) === 0,
+  "Business payment at maximum is FREE",
+);
+console.assert(
+  calculateFee("send", 150001) === null,
+  "Amount above maximum is not allowed",
+);
