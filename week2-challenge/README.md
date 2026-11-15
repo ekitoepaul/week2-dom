@@ -77,7 +77,13 @@ The checkers also cover empty names, empty or malformed phone numbers, missing a
 
 ## Screenshot
 
-![Pesa Haraka app screenshot](screenshot.png)
+![Pesa Haraka app screenshot](Screenshot 2026-11-15 020451.png)
+![Pesa Haraka app screenshot](Screenshot 2026-11-15 020517.png)
+![Pesa Haraka app screenshot](Screenshot 2026-11-15 021045.png)
+![Pesa Haraka app screenshot](Screenshot widrawal.png)
+![Pesa Haraka app screenshot](Screenshot 2026-11-15 165003.png)
+![Pesa Haraka app screenshot](Screenshot 2026-11-15 165452.png)
+![Pesa Haraka app screenshot](Screenshot 2026-11-15 165903.png)
 
 ## Suggested Git commit history
 
