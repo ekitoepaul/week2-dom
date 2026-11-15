@@ -1,5 +1,5 @@
 // -----------------------------------------
-// PESA HARAKA - WEB TRANSACTION CALCULATOR
+// PESA HARAKA WEB APP - TRANSACTION CALCULATOR
 // -----------------------------------------
 
 // 1. Fixed limits and DOM references (selected once).
