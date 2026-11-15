@@ -11,6 +11,7 @@
     <link rel="stylesheet" href="css/styles.css" />
     <script src="js/app.js" defer></script>
   </head>
+
   <body>
     <header class="site-header">
       <div class="header-inner">
@@ -38,81 +39,94 @@
             <h2 id="form-title">Transaction details</h2>
             <p>All fields are required.</p>
           </div>
-          <span class="secure-label"
-            ><span aria-hidden="true">*</span> Secure form</span
-          >
+          <span class="secure-label">
+            <span aria-hidden="true">*</span> Secure form
+          </span>
         </div>
 
         <form id="transaction-form" novalidate>
           <div class="field">
-            <label for="full-name">Full name</label>
-            <input
-              id="full-name"
-              name="fullName"
-              type="text"
-              autocomplete="name"
-              placeholder="e.g. Paul Ekitoe"
-              required
-              aria-describedby="name-help name-error"
-            />
-            <small id="name-help" class="field-help"
-              >Enter the customer's full name.</small
-            >
+            <label>
+              Full name
+              <input
+                id="full-name"
+                name="fullName"
+                type="text"
+                autocomplete="name"
+                placeholder="e.g. Paul Ekitoe"
+                required
+                aria-describedby="name-help name-error"
+              />
+            </label>
+
+            <small id="name-help" class="field-help">
+              Enter the customer's full name.
+            </small>
             <p id="name-error" class="error-message" aria-live="polite"></p>
           </div>
 
           <div class="field">
-            <label for="phone-number">Phone number</label>
-            <input
-              id="phone-number"
-              name="phoneNumber"
-              type="tel"
-              inputmode="tel"
-              autocomplete="tel-national"
-              placeholder="0717544278"
-              required
-              aria-describedby="phone-help phone-error"
-            />
-            <small id="phone-help" class="field-help"
-              >Use 10 digits beginning with 07 or 01.</small
-            >
+            <label>
+              Phone number
+              <input
+                id="phone-number"
+                name="phoneNumber"
+                type="tel"
+                inputmode="tel"
+                autocomplete="tel-national"
+                placeholder="0717544278"
+                required
+                aria-describedby="phone-help phone-error"
+              />
+            </label>
+
+            <small id="phone-help" class="field-help">
+              Use 10 digits beginning with 07 or 01.
+            </small>
             <p id="phone-error" class="error-message" aria-live="polite"></p>
           </div>
 
           <div class="field">
-            <label for="transaction-type">Transaction type</label>
-            <select
-              id="transaction-type"
-              name="transactionType"
-              required
-              aria-describedby="type-error"
-            >
-              <option value="">Choose a transaction</option>
-              <option value="send">Send money</option>
-              <option value="withdraw">Withdraw cash</option>
-              <option value="business">Pay a business</option>
-            </select>
+            <label>
+              Transaction type
+              <select
+                id="transaction-type"
+                name="transactionType"
+                required
+                aria-describedby="type-error"
+              >
+                <option value="">Choose a transaction</option>
+                <option value="send">Send money</option>
+                <option value="withdraw">Withdraw cash</option>
+                <option value="business">Pay a business</option>
+              </select>
+            </label>
+
             <p id="type-error" class="error-message" aria-live="polite"></p>
           </div>
 
           <div class="field">
-            <label for="amount">Amount (KSh)</label>
-            <input
-              id="amount"
-              name="amount"
-              type="number"
-              inputmode="decimal"
-              min="0.01"
-              max="150000"
-              step="0.01"
-              placeholder="e.g. 20001"
-              required
-              aria-describedby="amount-help amount-error"
-            />
-            <small id="amount-help" class="field-help"
-              >Maximum transaction amount is KSh 150,000.</small
-            >
+            <label>
+              Amount (KSh)
+              <input
+                id="amount"
+                name="amount"
+                type="number"
+                inputmode="decimal"
+                min="0.01"
+                max="150000"
+                step="0.01"
+                placeholder="e.g. 20001"
+                required
+                aria-describedby="amount-help amount-error"
+              />
+            </label>
+
+            <small id="amount-help" class="field-help">
+              Maximum transaction amount is KSh 150,000.
+            </small>
             <p id="amount-error" class="error-message" aria-live="polite"></p>
+
             <p
               id="fee-preview"
               class="fee-preview"
@@ -139,16 +153,20 @@
           <span class="success-icon" aria-hidden="true">✓</span>
           <p>Transaction confirmed</p>
         </div>
+
         <div id="receipt-content" class="receipt-paper">
           <h2 id="receipt-title">PESA HARAKA RECEIPT</h2>
           <p class="receipt-subtitle">Transaction confirmation</p>
+
           <div class="receipt-rule"></div>
           <dl id="receipt-details" class="receipt-details"></dl>
           <div class="receipt-rule"></div>
+
           <p class="receipt-thank-you">
             Thank you for using Pesa Haraka Web app!
           </p>
         </div>
+
         <button
           id="new-transaction"
           class="button button-primary"

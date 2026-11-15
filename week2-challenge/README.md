@@ -33,6 +33,43 @@ phas2-javascript/week2-challenge/
 
 No framework, package installation or build step is required.
 
+## Form labels
+
+The form uses **implicit labels**. Each form control is placed directly inside its `<label>` element, so the `for` attribute is not used.
+
+Example:
+
+```html
+<label>
+  Full name
+  <input
+    id="full-name"
+    name="fullName"
+    type="text"
+    autocomplete="name"
+    placeholder="e.g. Paul Ekitoe"
+    required
+    aria-describedby="name-help name-error"
+  />
+</label>
+```
+
+The `id` attributes are still used by JavaScript to select and update the form fields.
+
+## JavaScript approach
+
+The app uses:
+
+- `const` for values that are not reassigned.
+- Separate functions for validation, formatting, fee calculation, receipt creation, state and rendering.
+- Arrow functions for event callbacks.
+- `addEventListener()` to respond to user actions.
+- DOM methods including `querySelector`, `createElement`, `textContent`, `append` and `replaceChildren`.
+- A `currentView` state variable and a `renderView()` function to show either the form or receipt.
+- No `for`, `for...of`, or `forEach` loops.
+
+Instead of using loops, the app calls the validation and receipt-row functions directly for each field and receipt item.
+
 ## Fee rules used
 
 | Amount range       | Send money | Withdraw cash | Pay a business |
@@ -68,6 +105,7 @@ The checkers also cover empty names, empty or malformed phone numbers, missing a
 ## Accessibility and responsive checks
 
 - Every input has a visible `<label>`.
+- Each form control is nested inside its `<label>`, creating an implicit label association.
 - Transaction type uses a native `<select>`.
 - The form submits with a native submit button and works with keyboard navigation.
 - Validation messages are written using `textContent`; invalid fields receive `aria-invalid` and `aria-describedby`.
@@ -93,14 +131,18 @@ Make these as separate commits as you complete each stage (run commands from the
 git add index.html
 git commit -m "Create accessible Pesa Haraka form"
 
+
 git add css/styles.css
 git commit -m "Add responsive Pesa Haraka styling"
+
 
 git add js/app.js
 git commit -m "Implement fee calculation and validation"
 
+
 git add js/app.js index.html
 git commit -m "Add live fee preview and accessible receipt"
+
 
 git add README.md screenshot.png
 git commit -m "Document app and add screenshot"
