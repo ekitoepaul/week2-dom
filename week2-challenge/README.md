@@ -15,7 +15,7 @@ A responsive, accessible browser-based version of the Pesa Haraka console fee ca
 ## Project structure
 
 ```text
-phas2-javascript/week2-challenge/
+phase2-javascript/week2-challenge/
 ├── index.html
 ├── css/
 │   └── styles.css
@@ -123,39 +123,3 @@ The checkers also cover empty names, empty or malformed phone numbers, missing a
 ![Pesa Haraka app screenshot](Screenshot 2026-11-15 165452.png)
 ![Pesa Haraka app screenshot](Screenshot 2026-11-15 165903.png)
 
-## Suggested Git commit history
-
-Make these as separate commits as you complete each stage (run commands from the repository root):
-
-```bash
-git add index.html
-git commit -m "Create accessible Pesa Haraka form"
-
-
-git add css/styles.css
-git commit -m "Add responsive Pesa Haraka styling"
-
-
-git add js/app.js
-git commit -m "Implement fee calculation and validation"
-
-
-git add js/app.js index.html
-git commit -m "Add live fee preview and accessible receipt"
-
-
-git add README.md screenshot.png
-git commit -m "Document app and add screenshot"
-```
-
-Then push your branch:
-
-```bash
-git push origin main
-```
-
-If your default branch is not `main`, replace `main` with the branch name shown by `git branch --show-current`.
-
-## Optional: publish with GitHub Pages
-
-In the GitHub repository, open **Settings → Pages**. Under **Build and deployment**, choose **Deploy from a branch**, select `main` and `/ (root)`, then save. GitHub Pages will publish the app after deployment completes.
