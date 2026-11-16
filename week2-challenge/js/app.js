@@ -167,11 +167,11 @@ function checkTransactionType(value) {
 // Formatting helpers
 // -----------------------------------------
 
-function formatMoney(value) {
-  return value.toLocaleString("en-KE", {
+function formatKsh(value) {
+  return `KSh ${value.toLocaleString("en-KE", {
     minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
     maximumFractionDigits: 2,
-  });
+  })}`;
 }
 
 function getTransactionLabel(type) {
