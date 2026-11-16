@@ -1,0 +1,20 @@
+.goal {
+  font-weight: 700;
+  color: #15803d;
+}
+
+#price-table {
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+#price-table th,
+#price-table td {
+  border: 1px solid #d1d5db;
+  padding: 0.5rem 0.75rem;
+  text-align: left;
+}
+
+#price-table th {
+  background-color: #f3f4f6;
+}

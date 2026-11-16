@@ -46,3 +46,55 @@ const methodsAgree =
   fullOrders === calculatedOrders && tomatoes === calculatedLeftover;
 
 console.log(`Both methods give the same result: ${methodsAgree}`);
+
+// Price table: half-kilo steps from 0.5 kg to 5 kg
+const priceTable = document.querySelector("#price-table");
+const pricePerKg = 120;
+const vatRate = 0.16;
+
+priceTable.innerHTML = `
+  <thead>
+    <tr>
+      <th>Quantity (kg)</th>
+      <th>Price before VAT</th>
+      <th>Price including 16% VAT</th>
+    </tr>
+  </thead>
+  <tbody></tbody>
+`;
+
+const tableBody = priceTable.querySelector("tbody");
+
+for (let quantity = 0.5; quantity <= 5; quantity += 0.5) {
+  const priceBeforeVat = quantity * pricePerKg;
+  const priceIncludingVat = priceBeforeVat * (1 + vatRate);
+
+  const row = document.createElement("tr");
+
+  row.innerHTML = `
+    <td>${quantity} kg</td>
+    <td>${formatKsh(priceBeforeVat)}</td>
+    <td>${formatKsh(priceIncludingVat)}</td>
+  `;
+
+  tableBody.appendChild(row);
+}
+
+// Count how many times the letter "a" appears, ignoring case
+const message = "Mama Mboga Fresh, Kangemi Market";
+let aCount = 0;
+
+for (let index = 0; index < message.length; index++) {
+  if (message[index].toLowerCase() === "a") {
+    aCount++;
+  }
+}
+
+console.log(`The letter "a" appears ${aCount} times.`);
+
+// Show the result on the page
+const outputList = document.querySelector("#output");
+const resultItem = document.createElement("li");
+
+resultItem.textContent = `The letter "a" appears ${aCount} times in "${message}".`;
+outputList.appendChild(resultItem);
