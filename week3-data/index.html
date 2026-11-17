@@ -14,6 +14,24 @@
 
     <ul id="output"></ul>
 
+    <form id="add-form">
+      <label for="new-product">New product</label>
+      <input type="text" id="new-product" />
+      <button type="submit">Add</button>
+    </form>
+
+    <button type ="button" id="remove-last">Remove Last</button>
+    
+    <form id="bulk-add-form">
+      <label for="new-products">Add multiple products (comma-separated)</label>
+      <input type="text" id="new-products" placeholder="mangoes, pawpaw, bananas"/>
+      <button type="submit">Add products</button>
+    </form>
+
+    <ul id="stock-list"></ul>
+
+    <p id="stock-count"></p>
+
     <script src="js/app.js"></script>
   </body>
 </html>

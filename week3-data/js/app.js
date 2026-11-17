@@ -98,3 +98,89 @@ const resultItem = document.createElement("li");
 
 resultItem.textContent = `The letter "a" appears ${aCount} times in "${message}".`;
 outputList.appendChild(resultItem);
+
+// Stock list: add products, remove the last product, and show the stock count
+const stock = ["Tomatoes", "Onions", "Sukuma"]; // state
+
+const addForm = document.querySelector("#add-form");
+const newProductInput = document.querySelector("#new-product");
+const stockList = document.querySelector("#stock-list");
+const stockCount = document.querySelector("#stock-count");
+const removeLastButton = document.querySelector("#remove-last");
+
+const bulkAddForm = document.querySelector("#bulk-add-form");
+const newProductsInput = document.querySelector("#new-products");
+
+function renderStock() {
+  stockList.textContent = ""; // clear, then rebuild
+
+  for (let i = 0; i < stock.length; i++) {
+    const li = document.createElement("li");
+    li.textContent = `${i + 1}. ${stock[i]}`;
+    stockList.append(li);
+  }
+
+  const word = stock.length === 1 ? "product" : "products";
+  stockCount.textContent = `${stock.length} ${word} in stock`;
+}
+
+addForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const name = newProductInput.value.trim();
+  const lowerCaseName = name.toLowerCase();
+
+  let isDuplicate = false;
+
+  for (let i = 0; i < stock.length; i++) {
+    if (stock[i].toLowerCase() === lowerCaseName) {
+      isDuplicate = true;
+      break;
+    }
+  }
+
+  if (name === "" || isDuplicate) {
+    return;
+  }
+
+  stock.push(name);
+  newProductInput.value = "";
+  renderStock();
+});
+
+removeLastButton.addEventListener("click", () => {
+  if (stock.length > 0) {
+    stock.pop();
+    renderStock();
+  }
+});
+
+bulkAddForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const productsText = newProductsInput.value;
+  const productNames = productsText.split(",");
+
+  for (let i = 0; i < productNames.length; i++) {
+    const name = productNames[i].trim();
+    const lowerCaseName = name.toLowerCase();
+
+    let isDuplicate = false;
+
+    for (let j = 0; j < stock.length; j++) {
+      if (stock[j].toLowerCase() === lowerCaseName) {
+        isDuplicate = true;
+        break;
+      }
+    }
+
+    if (name !== "" && !isDuplicate) {
+      stock.push(name);
+    }
+  }
+
+  newProductsInput.value = "";
+  renderStock();
+});
+
+renderStock();
