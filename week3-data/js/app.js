@@ -184,3 +184,89 @@ bulkAddForm.addEventListener("submit", (event) => {
 });
 
 renderStock();
+
+// Product search and price filter
+const names = [
+  "Tomatoes",
+  "Onions",
+  "Sukuma",
+  "Spinach",
+  "Avocados",
+  "Cabbage",
+];
+
+const costs = [120, 80, 20, 40, 30, 0];
+
+const searchInput = document.querySelector("#search");
+const under100 = document.querySelector("#under-100");
+const results = document.querySelector("#results");
+const resultsCount = document.querySelector("#results-count");
+const under50Message = document.querySelector("#under-50-message");
+const findButton = document.querySelector("#find-button");
+
+function matchingIndexes() {
+  const term = searchInput.value.trim().toLowerCase();
+  return names
+    .map((name, i) => i) // [0, 1, 2, 3, 4]
+    .filter((i) => names[i].toLowerCase().includes(term))
+    .filter((i) => !under100.checked || costs[i] < 100);
+}
+
+function updateUnder50Message() {
+  const hasProductUnder50 = costs.some((cost) => cost < 50);
+
+  if (hasProductUnder50) {
+    under50Message.textContent = "Some products are under KSh 50";
+  } else {
+    under50Message.textContent = "No products under KSh 50";
+  }
+}
+
+function renderResults() {
+  const foundIndexes = matchingIndexes();
+
+  results.textContent = "";
+
+  for (let i = 0; i < foundIndexes.length; i++) {
+    const index = foundIndexes[i];
+    const cost = costs[index];
+
+    let productText = `${names[index]}: ${formatKsh(cost)}`;
+
+    if (cost === 0) {
+      productText += " — Sold out";
+    }
+
+    const listItem = document.createElement("li");
+    listItem.textContent = productText;
+
+    results.append(listItem);
+  }
+
+  if (foundIndexes.length === 0) {
+    resultsCount.textContent = "No products match";
+  } else {
+    resultsCount.textContent = `${foundIndexes.length} of ${names.length} products`;
+  }
+
+  updateUnder50Message();
+}
+function findFirstProduct() {
+  const letter = searchInput.value.trim().toLowerCase();
+
+  const firstMatch = names.find((name) => {
+    return name.toLowerCase().startsWith(letter);
+  });
+
+  if (firstMatch) {
+    resultsCount.textContent = `First product found: ${firstMatch}`;
+  } else {
+    resultsCount.textContent = "Not found";
+  }
+}
+
+findButton.addEventListener("click", findFirstProduct);
+searchInput.addEventListener("input", renderResults);
+under100.addEventListener("change", renderResults);
+
+renderResults();

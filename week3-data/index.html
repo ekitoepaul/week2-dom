@@ -20,11 +20,15 @@
       <button type="submit">Add</button>
     </form>
 
-    <button type ="button" id="remove-last">Remove Last</button>
-    
+    <button type="button" id="remove-last">Remove Last</button>
+
     <form id="bulk-add-form">
       <label for="new-products">Add multiple products (comma-separated)</label>
-      <input type="text" id="new-products" placeholder="mangoes, pawpaw, bananas"/>
+      <input
+        type="text"
+        id="new-products"
+        placeholder="mangoes, pawpaw, bananas"
+      />
       <button type="submit">Add products</button>
     </form>
 
@@ -32,6 +36,21 @@
 
     <p id="stock-count"></p>
 
+    <search>
+      <label for="search">Search products</label>
+      <input type="search" id="search" placeholder="e.g. sukuma" />
+
+      <label>
+        <input type="checkbox" id="under-100" /> Only under KSh 100
+      </label>
+
+      <button type="button" id="find-button">Find</button>
+
+      <ul id="results"></ul>
+      <p id="results-count"></p>
+
+      <p id="under-50-message"></p>
+    </search>
     <script src="js/app.js"></script>
   </body>
 </html>
