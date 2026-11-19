@@ -35,7 +35,7 @@
     <ul id="stock-list"></ul>
 
     <p id="stock-count"></p>
-    
+
     <search>
       <label for="search">Search products</label>
       <input type="search" id="search" placeholder="e.g. sukuma" />
@@ -43,7 +43,7 @@
       <label>
         <input type="checkbox" id="under-100" /> Only under KSh 100
       </label>
-      
+
       <!-- Sort products -->
       <label for="sort-by">Sort By:</label>
 
@@ -51,6 +51,7 @@
         <option value="name">Name</option>
         <option value="price">Price</option>
       </select>
+
       <button type="button" id="find-button">Find</button>
 
       <ul id="results"></ul>
@@ -61,8 +62,28 @@
 
       <p id="under-50-message"></p>
     </search>
+
+    <section>
+      <h2>Delivery Fees</h2>
+
+      <form id="delivery-form">
+        <label for="delivery-area">Delivery area:</label>
+        <input
+          type="text"
+          id="delivery-area"
+          placeholder="e.g. Kangemi"
+          autocomplete="off"
+        />
+
+        <button type="submit">Check delivery fee</button>
+      </form>
+
+      <p id="delivery-result"></p>
+    </section>
+
     <section id="report">
       <h2>Today's sales</h2>
+
       <form id="sale-form">
         <label for="sale-amount">Sale amount (KSh)</label>
         <input type="number" id="sale-amount" min="1" />
@@ -72,9 +93,11 @@
       <button type="button" id="clear-sales">Clear the day</button>
 
       <dl id="summary"></dl>
+
       <h3>Top three sales</h3>
       <ol id="top-sales"></ol>
     </section>
+
     <script src="js/app.js"></script>
   </body>
 </html>

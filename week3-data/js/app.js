@@ -8,7 +8,7 @@
 
 function formatKsh(value) {
   return `KSh ${value.toLocaleString("en-KE", {
-    minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
+    minimumFractionDigits: 2,
     maximumFractionDigits: 2,
   })}`;
 }
@@ -51,7 +51,6 @@ console.log(`While loop: ${tomatoes} kg of tomatoes left`);
 const totalTomatoes = 37;
 
 const calculatedOrders = Math.floor(totalTomatoes / kilogramsPerOrder);
-
 const calculatedLeftover = totalTomatoes % kilogramsPerOrder;
 
 console.log(`Math.floor and %: ${calculatedOrders} full orders served`);
@@ -160,14 +159,9 @@ addForm.addEventListener("submit", (event) => {
   const name = newProductInput.value.trim();
   const lowerCaseName = name.toLowerCase();
 
-  let isDuplicate = false;
-
-  for (let i = 0; i < stock.length; i++) {
-    if (stock[i].toLowerCase() === lowerCaseName) {
-      isDuplicate = true;
-      break;
-    }
-  }
+  const isDuplicate = stock.some(
+    (existingProduct) => existingProduct.toLowerCase() === lowerCaseName,
+  );
 
   if (name === "" || isDuplicate) {
     return;
@@ -198,14 +192,9 @@ bulkAddForm.addEventListener("submit", (event) => {
     const name = productNames[i].trim();
     const lowerCaseName = name.toLowerCase();
 
-    let isDuplicate = false;
-
-    for (let j = 0; j < stock.length; j++) {
-      if (stock[j].toLowerCase() === lowerCaseName) {
-        isDuplicate = true;
-        break;
-      }
-    }
+    const isDuplicate = stock.some(
+      (existingProduct) => existingProduct.toLowerCase() === lowerCaseName,
+    );
 
     if (name !== "" && !isDuplicate) {
       stock.push(name);
@@ -242,17 +231,16 @@ const stockValue = document.querySelector("#stock-value");
 const sortBy = document.querySelector("#sort-by");
 
 // Find matching products
-
 function matchingProducts() {
   const term = searchInput.value.trim().toLowerCase();
 
   return (
     products
       // Filter products by name
-      .filter((p) => p.name.toLowerCase().includes(term))
+      .filter((product) => product.name.toLowerCase().includes(term))
 
       // Filter products under KSh 100
-      .filter((p) => !under100.checked || p.price < 100)
+      .filter((product) => !under100.checked || product.price < 100)
 
       // Sort products according to the selected option
       .sort((a, b) => {
@@ -272,13 +260,12 @@ function renderResults() {
   // Clear previous results
   results.textContent = "";
 
-  // Display each matching product
-  found.forEach((p) => {
+  found.forEach((product) => {
     const li = document.createElement("li");
 
-    const status = p.stockKg === 0 ? " (sold out)" : "";
+    const status = product.stockKg === 0 ? " (sold out)" : "";
 
-    li.textContent = `${p.name}: ${formatKsh(p.price)}${status}`;
+    li.textContent = `${product.name}: ${formatKsh(product.price)}${status}`;
 
     results.append(li);
   });
@@ -290,13 +277,45 @@ function renderResults() {
       : `${found.length} of ${products.length} products`;
 
   // Calculate total stock value using reduce()
-  const totalStockValue = found.reduce((total, p) => {
-    return total + p.price * p.stockKg;
+  const totalStockValue = found.reduce((total, product) => {
+    return total + product.price * product.stockKg;
   }, 0);
 
   // Display total stock value
   stockValue.textContent = `Total stock value: ${formatKsh(totalStockValue)}`;
 }
+
+// Restock a product by ID
+function restock(id, kg) {
+  // Find product using its ID
+  const product = products.find((item) => item.id === id);
+
+  // Check whether product exists
+  if (!product) {
+    console.log("Product not found!");
+    return;
+  }
+
+  // Validate kilograms
+  if (!Number.isFinite(kg) || kg <= 0) {
+    console.log("Please enter a valid quantity.");
+    return;
+  }
+
+  // Add kilograms to existing stock
+  product.stockKg += kg;
+
+  // Display confirmation
+  console.log(
+    `${product.name} restocked successfully. New stock: ${product.stockKg} kg`,
+  );
+
+  // Refresh product results and stock value
+  renderResults();
+}
+
+// Make function accessible from browser console
+window.restock = restock;
 
 // Listen for user actions
 searchInput.addEventListener("input", renderResults);
@@ -407,3 +426,37 @@ clearSalesButton.addEventListener("click", () => {
 
 // Display initial sales report
 renderReport();
+
+// ---------------------------------------------
+// 9. DELIVERY FEES LOOKUP
+// ---------------------------------------------
+
+const deliveryFees = {
+  kangemi: 150,
+  westlands: 250,
+  kawangware: 200,
+};
+
+const deliveryForm = document.querySelector("#delivery-form");
+const deliveryAreaInput = document.querySelector("#delivery-area");
+const deliveryResult = document.querySelector("#delivery-result");
+
+deliveryForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  // Get and normalize the user's input
+  const area = deliveryAreaInput.value.trim().toLowerCase();
+
+  // Look up the fee using the typed area
+  const fee = deliveryFees[area];
+
+  if (fee === undefined) {
+    deliveryResult.textContent = "Sorry, we do not deliver to that area yet.";
+
+    return;
+  }
+
+  deliveryResult.textContent = `Delivery to ${deliveryAreaInput.value.trim()} costs ${formatKsh(fee)}.`;
+
+  deliveryAreaInput.value = "";
+});
