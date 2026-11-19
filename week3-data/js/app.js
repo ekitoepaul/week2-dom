@@ -185,92 +185,65 @@ bulkAddForm.addEventListener("submit", (event) => {
 
 renderStock();
 
-// Product search and price filter
-const names = [
-  "Tomatoes",
-  "Onions",
-  "Sukuma",
-  "Spinach",
-  "Avocados",
-  "Cabbage",
+// -----------------------------------------
+// MAMA MBOGA FRESH - PRODUCT SEARCH
+// -----------------------------------------
+
+// 1. Array of product objects
+const products = [
+  { id: 1, name: "Tomatoes", price: 120, stockKg: 12 },
+  { id: 2, name: "Onions", price: 80, stockKg: 0 },
+  { id: 3, name: "Sukuma", price: 20, stockKg: 30 },
+  { id: 4, name: "Spinach", price: 40, stockKg: 8 },
+  { id: 5, name: "Avocados", price: 30, stockKg: 5 },
 ];
 
-const costs = [120, 80, 20, 40, 30, 0];
-
+// 2. Get HTML elements
 const searchInput = document.querySelector("#search");
 const under100 = document.querySelector("#under-100");
 const results = document.querySelector("#results");
 const resultsCount = document.querySelector("#results-count");
-const under50Message = document.querySelector("#under-50-message");
-const findButton = document.querySelector("#find-button");
 
-function matchingIndexes() {
+// 3. Find matching products
+function matchingProducts() {
   const term = searchInput.value.trim().toLowerCase();
 
-  return names
-    .map((name, i) => i)
-    .filter((i) => names[i].toLowerCase().includes(term))
-    .filter((i) => !under100.checked || costs[i] < 100);
+  return products
+    .filter((p) => p.name.toLowerCase().includes(term))
+    .filter((p) => !under100.checked || p.price < 100)
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-function updateUnder50Message() {
-  const hasProductUnder50 = costs.some((cost) => cost < 50);
-
-  if (hasProductUnder50) {
-    under50Message.textContent = "Some products are under KSh 50";
-  } else {
-    under50Message.textContent = "No products under KSh 50";
-  }
-}
-
+// 4. Display matching products
 function renderResults() {
-  const foundIndexes = matchingIndexes();
+  const found = matchingProducts();
 
+  // Clear previous results
   results.textContent = "";
 
-  for (let i = 0; i < foundIndexes.length; i++) {
-    const index = foundIndexes[i];
-    const cost = costs[index];
+  // Display each matching product
+  found.forEach((p) => {
+    const li = document.createElement("li");
 
-    let productText = `${names[index]}: ${formatKsh(cost)}`;
+    const status = p.stockKg === 0 ? " (sold out)" : "";
 
-    if (cost === 0) {
-      productText += " — Sold out";
-    }
+    li.textContent = `${p.name}: ${formatKsh(p.price)}${status}`;
 
-    const listItem = document.createElement("li");
-    listItem.textContent = productText;
-
-    results.append(listItem);
-  }
-
-  if (foundIndexes.length === 0) {
-    resultsCount.textContent = "No products match";
-  } else {
-    resultsCount.textContent = `${foundIndexes.length} of ${names.length} products`;
-  }
-
-  updateUnder50Message();
-}
-
-function findFirstProduct() {
-  const letter = searchInput.value.trim().toLowerCase();
-
-  const firstMatch = names.find((name) => {
-    return name.toLowerCase().startsWith(letter);
+    results.append(li);
   });
 
-  if (firstMatch) {
-    resultsCount.textContent = `First product found: ${firstMatch}`;
-  } else {
-    resultsCount.textContent = "Not found";
-  }
+  // Display number of matching products
+  resultsCount.textContent =
+    found.length === 0
+      ? "No products match"
+      : `${found.length} of ${products.length} products`;
 }
 
-findButton.addEventListener("click", findFirstProduct);
+// 5. Listen for user actions
 searchInput.addEventListener("input", renderResults);
 under100.addEventListener("change", renderResults);
 
+// 6. Display all products when page loads
 renderResults();
 
 // Today's sales report
