@@ -206,8 +206,9 @@ const findButton = document.querySelector("#find-button");
 
 function matchingIndexes() {
   const term = searchInput.value.trim().toLowerCase();
+
   return names
-    .map((name, i) => i) // [0, 1, 2, 3, 4]
+    .map((name, i) => i)
     .filter((i) => names[i].toLowerCase().includes(term))
     .filter((i) => !under100.checked || costs[i] < 100);
 }
@@ -251,6 +252,7 @@ function renderResults() {
 
   updateUnder50Message();
 }
+
 function findFirstProduct() {
   const letter = searchInput.value.trim().toLowerCase();
 
@@ -270,3 +272,86 @@ searchInput.addEventListener("input", renderResults);
 under100.addEventListener("change", renderResults);
 
 renderResults();
+
+// Today's sales report
+const sales = [450, 1200, 80, 3000, 950]; // state
+
+const saleForm = document.querySelector("#sale-form");
+const saleAmount = document.querySelector("#sale-amount");
+const summary = document.querySelector("#summary");
+const topSales = document.querySelector("#top-sales");
+const clearSalesButton = document.querySelector("#clear-sales");
+
+function addRow(term, value) {
+  const dt = document.createElement("dt");
+  const dd = document.createElement("dd");
+
+  dt.textContent = term;
+  dd.textContent = value;
+
+  summary.append(dt, dd);
+}
+
+function renderReport() {
+  const total = sales.reduce((sum, amount) => sum + amount, 0);
+  const average = sales.length === 0 ? 0 : total / sales.length;
+  const bigCount = sales.filter((amount) => amount >= 1000).length;
+
+  const smallestSale = sales.length
+    ? sales.reduce(
+        (smallest, amount) => (amount < smallest ? amount : smallest),
+        sales[0],
+      )
+    : null;
+
+  const smallSalesTotal = sales
+    .filter((amount) => amount < 500)
+    .reduce((total, amount) => total + amount, 0);
+
+  summary.textContent = "";
+
+  addRow("Number of sales", sales.length);
+  addRow("Total", formatKsh(total));
+  addRow("Average sale", formatKsh(Math.round(average)));
+  addRow("Sales of KSh 1,000 or more", bigCount);
+  addRow(
+    "Smallest sale",
+    smallestSale === null ? "No sales yet" : formatKsh(smallestSale),
+  );
+  addRow("Total of sales under KSh 500", formatKsh(smallSalesTotal));
+
+  topSales.textContent = "";
+
+  sales
+    .slice()
+    .sort((a, b) => b - a)
+    .slice(0, 3)
+    .forEach((amount) => {
+      const li = document.createElement("li");
+      li.textContent = formatKsh(amount);
+
+      topSales.append(li);
+    });
+}
+
+saleForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const amount = Number(saleAmount.value);
+
+  if (!Number.isFinite(amount) || amount <= 0) {
+    return;
+  }
+
+  sales.push(amount);
+  saleAmount.value = "";
+
+  renderReport();
+});
+
+clearSalesButton.addEventListener("click", () => {
+  sales.length = 0;
+  renderReport();
+});
+
+renderReport();

@@ -51,6 +51,20 @@
 
       <p id="under-50-message"></p>
     </search>
+    <section id="report">
+      <h2>Today's sales</h2>
+      <form id="sale-form">
+        <label for="sale-amount">Sale amount (KSh)</label>
+        <input type="number" id="sale-amount" min="1" />
+        <button type="submit">Record sale</button>
+      </form>
+
+      <button type="button" id="clear-sales">Clear the day</button>
+
+      <dl id="summary"></dl>
+      <h3>Top three sales</h3>
+      <ol id="top-sales"></ol>
+    </section>
     <script src="js/app.js"></script>
   </body>
 </html>
