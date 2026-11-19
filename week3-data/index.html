@@ -43,11 +43,18 @@
       <label>
         <input type="checkbox" id="under-100" /> Only under KSh 100
       </label>
+      
+      <!-- Sort products -->
+      <label for="sort-by">Sort By:</label>
 
+      <select id="sort-by">
+        <option value="name">Name</option>
+        <option value="price">Price</option>
+      </select>
       <button type="button" id="find-button">Find</button>
 
       <ul id="results"></ul>
-      
+
       <p id="results-count"></p>
 
       <p id="stock-value"></p>

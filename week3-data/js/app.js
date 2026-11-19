@@ -239,15 +239,30 @@ const under100 = document.querySelector("#under-100");
 const results = document.querySelector("#results");
 const resultsCount = document.querySelector("#results-count");
 const stockValue = document.querySelector("#stock-value");
+const sortBy = document.querySelector("#sort-by");
 
 // Find matching products
+
 function matchingProducts() {
   const term = searchInput.value.trim().toLowerCase();
 
-  return products
-    .filter((p) => p.name.toLowerCase().includes(term))
-    .filter((p) => !under100.checked || p.price < 100)
-    .sort((a, b) => a.name.localeCompare(b.name));
+  return (
+    products
+      // Filter products by name
+      .filter((p) => p.name.toLowerCase().includes(term))
+
+      // Filter products under KSh 100
+      .filter((p) => !under100.checked || p.price < 100)
+
+      // Sort products according to the selected option
+      .sort((a, b) => {
+        if (sortBy.value === "price") {
+          return a.price - b.price;
+        }
+
+        return a.name.localeCompare(b.name);
+      })
+  );
 }
 
 // Display matching products and stock value
@@ -286,6 +301,7 @@ function renderResults() {
 // Listen for user actions
 searchInput.addEventListener("input", renderResults);
 under100.addEventListener("change", renderResults);
+sortBy.addEventListener("change", renderResults);
 
 // Display all products when page loads
 renderResults();
