@@ -1,9 +1,21 @@
+// =============================================
+// MAMA MBOGA FRESH - JAVASCRIPT EXERCISES
+// =============================================
+
+// ---------------------------------------------
+// 1. FORMAT KENYA SHILLINGS
+// ---------------------------------------------
+
 function formatKsh(value) {
   return `KSh ${value.toLocaleString("en-KE", {
     minimumFractionDigits: Number.isInteger(value) ? 0 : 2,
     maximumFractionDigits: 2,
   })}`;
 }
+
+// ---------------------------------------------
+// 2. FOR LOOPS AND CONTINUE
+// ---------------------------------------------
 
 // Print every multiple of 5 from 5 to 100 using continue
 for (let number = 1; number <= 100; number++) {
@@ -14,12 +26,15 @@ for (let number = 1; number <= 100; number++) {
   console.log(number);
 }
 
-// Print every multiple of 5 from 5 to 100 using a better step
+// Print every multiple of 5 using a better step
 for (let number = 5; number <= 100; number += 5) {
   console.log(number);
 }
 
-// Mama Mboga tomato exercise using a while loop
+// ---------------------------------------------
+// 3. TOMATO EXERCISE USING WHILE LOOP
+// ---------------------------------------------
+
 let tomatoes = 37;
 const kilogramsPerOrder = 4;
 let fullOrders = 0;
@@ -36,6 +51,7 @@ console.log(`While loop: ${tomatoes} kg of tomatoes left`);
 const totalTomatoes = 37;
 
 const calculatedOrders = Math.floor(totalTomatoes / kilogramsPerOrder);
+
 const calculatedLeftover = totalTomatoes % kilogramsPerOrder;
 
 console.log(`Math.floor and %: ${calculatedOrders} full orders served`);
@@ -47,7 +63,10 @@ const methodsAgree =
 
 console.log(`Both methods give the same result: ${methodsAgree}`);
 
-// Price table: half-kilo steps from 0.5 kg to 5 kg
+// ---------------------------------------------
+// 4. PRICE TABLE WITH 16% VAT
+// ---------------------------------------------
+
 const priceTable = document.querySelector("#price-table");
 const pricePerKg = 120;
 const vatRate = 0.16;
@@ -80,7 +99,10 @@ for (let quantity = 0.5; quantity <= 5; quantity += 0.5) {
   tableBody.appendChild(row);
 }
 
-// Count how many times the letter "a" appears, ignoring case
+// ---------------------------------------------
+// 5. COUNT THE LETTER "a"
+// ---------------------------------------------
+
 const message = "Mama Mboga Fresh, Kangemi Market";
 let aCount = 0;
 
@@ -97,10 +119,15 @@ const outputList = document.querySelector("#output");
 const resultItem = document.createElement("li");
 
 resultItem.textContent = `The letter "a" appears ${aCount} times in "${message}".`;
+
 outputList.appendChild(resultItem);
 
-// Stock list: add products, remove the last product, and show the stock count
-const stock = ["Tomatoes", "Onions", "Sukuma"]; // state
+// ---------------------------------------------
+// 6. STOCK MANAGEMENT
+// ---------------------------------------------
+
+// Initial stock
+const stock = ["Tomatoes", "Onions", "Sukuma"];
 
 const addForm = document.querySelector("#add-form");
 const newProductInput = document.querySelector("#new-product");
@@ -111,8 +138,9 @@ const removeLastButton = document.querySelector("#remove-last");
 const bulkAddForm = document.querySelector("#bulk-add-form");
 const newProductsInput = document.querySelector("#new-products");
 
+// Display stock products
 function renderStock() {
-  stockList.textContent = ""; // clear, then rebuild
+  stockList.textContent = "";
 
   for (let i = 0; i < stock.length; i++) {
     const li = document.createElement("li");
@@ -121,9 +149,11 @@ function renderStock() {
   }
 
   const word = stock.length === 1 ? "product" : "products";
+
   stockCount.textContent = `${stock.length} ${word} in stock`;
 }
 
+// Add a single product
 addForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -144,10 +174,12 @@ addForm.addEventListener("submit", (event) => {
   }
 
   stock.push(name);
+
   newProductInput.value = "";
   renderStock();
 });
 
+// Remove the last product
 removeLastButton.addEventListener("click", () => {
   if (stock.length > 0) {
     stock.pop();
@@ -155,6 +187,7 @@ removeLastButton.addEventListener("click", () => {
   }
 });
 
+// Add multiple products
 bulkAddForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -183,13 +216,15 @@ bulkAddForm.addEventListener("submit", (event) => {
   renderStock();
 });
 
+// Display initial stock
 renderStock();
 
-// -----------------------------------------
-// MAMA MBOGA FRESH - PRODUCT SEARCH
-// -----------------------------------------
+// ---------------------------------------------
+// 7. MAMA MBOGA FRESH - PRODUCT SEARCH
+// USING AN ARRAY OF OBJECTS
+// ---------------------------------------------
 
-// 1. Array of product objects
+// Array of product objects
 const products = [
   { id: 1, name: "Tomatoes", price: 120, stockKg: 12 },
   { id: 2, name: "Onions", price: 80, stockKg: 0 },
@@ -198,13 +233,14 @@ const products = [
   { id: 5, name: "Avocados", price: 30, stockKg: 5 },
 ];
 
-// 2. Get HTML elements
+// Get HTML elements
 const searchInput = document.querySelector("#search");
 const under100 = document.querySelector("#under-100");
 const results = document.querySelector("#results");
 const resultsCount = document.querySelector("#results-count");
+const stockValue = document.querySelector("#stock-value");
 
-// 3. Find matching products
+// Find matching products
 function matchingProducts() {
   const term = searchInput.value.trim().toLowerCase();
 
@@ -214,7 +250,7 @@ function matchingProducts() {
     .sort((a, b) => a.name.localeCompare(b.name));
 }
 
-// 4. Display matching products
+// Display matching products and stock value
 function renderResults() {
   const found = matchingProducts();
 
@@ -237,17 +273,29 @@ function renderResults() {
     found.length === 0
       ? "No products match"
       : `${found.length} of ${products.length} products`;
+
+  // Calculate total stock value using reduce()
+  const totalStockValue = found.reduce((total, p) => {
+    return total + p.price * p.stockKg;
+  }, 0);
+
+  // Display total stock value
+  stockValue.textContent = `Total stock value: ${formatKsh(totalStockValue)}`;
 }
 
-// 5. Listen for user actions
+// Listen for user actions
 searchInput.addEventListener("input", renderResults);
 under100.addEventListener("change", renderResults);
 
-// 6. Display all products when page loads
+// Display all products when page loads
 renderResults();
 
-// Today's sales report
-const sales = [450, 1200, 80, 3000, 950]; // state
+// ---------------------------------------------
+// 8. TODAY'S SALES REPORT
+// ---------------------------------------------
+
+// Initial sales data
+const sales = [450, 1200, 80, 3000, 950];
 
 const saleForm = document.querySelector("#sale-form");
 const saleAmount = document.querySelector("#sale-amount");
@@ -255,6 +303,7 @@ const summary = document.querySelector("#summary");
 const topSales = document.querySelector("#top-sales");
 const clearSalesButton = document.querySelector("#clear-sales");
 
+// Add a row to the sales summary
 function addRow(term, value) {
   const dt = document.createElement("dt");
   const dd = document.createElement("dd");
@@ -265,9 +314,12 @@ function addRow(term, value) {
   summary.append(dt, dd);
 }
 
+// Display sales report
 function renderReport() {
   const total = sales.reduce((sum, amount) => sum + amount, 0);
+
   const average = sales.length === 0 ? 0 : total / sales.length;
+
   const bigCount = sales.filter((amount) => amount >= 1000).length;
 
   const smallestSale = sales.length
@@ -281,18 +333,23 @@ function renderReport() {
     .filter((amount) => amount < 500)
     .reduce((total, amount) => total + amount, 0);
 
+  // Clear previous summary
   summary.textContent = "";
 
+  // Display sales statistics
   addRow("Number of sales", sales.length);
   addRow("Total", formatKsh(total));
   addRow("Average sale", formatKsh(Math.round(average)));
   addRow("Sales of KSh 1,000 or more", bigCount);
+
   addRow(
     "Smallest sale",
     smallestSale === null ? "No sales yet" : formatKsh(smallestSale),
   );
+
   addRow("Total of sales under KSh 500", formatKsh(smallSalesTotal));
 
+  // Display the three largest sales
   topSales.textContent = "";
 
   sales
@@ -301,12 +358,14 @@ function renderReport() {
     .slice(0, 3)
     .forEach((amount) => {
       const li = document.createElement("li");
+
       li.textContent = formatKsh(amount);
 
       topSales.append(li);
     });
 }
 
+// Add a new sale
 saleForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
@@ -317,14 +376,18 @@ saleForm.addEventListener("submit", (event) => {
   }
 
   sales.push(amount);
+
   saleAmount.value = "";
 
   renderReport();
 });
 
+// Clear all sales
 clearSalesButton.addEventListener("click", () => {
   sales.length = 0;
+
   renderReport();
 });
 
+// Display initial sales report
 renderReport();
