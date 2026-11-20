@@ -1,0 +1,170 @@
+/* Makes padding and borders easier to calculate */
+* {
+  box-sizing: border-box;
+}
+
+/* Basic styles for the whole page */
+body {
+  margin: 0; /* Removes default space around the page */
+  font-family: Arial, sans-serif; /* Simple readable font */
+  background: #f4f6f8; /* Light grey background */
+  color: #222; /* Dark text colour */
+  line-height: 1.5; /* Space between lines of text */
+}
+
+/* Keeps the header and main content centred */
+header,
+main {
+  max-width: 1000px; /* Stops content becoming too wide */
+  margin: 0 auto; /* Centers content */
+  padding: 1rem; /* Adds space inside */
+}
+
+/* Styles the top green banner */
+header {
+  background: #14532d; /* Dark green background */
+  color: #fff; /* White text */
+}
+
+/* Removes extra space above headings */
+h1,
+h2 {
+  margin-top: 0;
+}
+
+/* Styles each white card on the page */
+section {
+  background: #fff; /* White background */
+  border: 1px solid #d9e1e7; /* Light border */
+  border-radius: 8px; /* Rounded corners */
+  padding: 1rem; /* Space inside the card */
+  margin-bottom: 1rem; /* Space below each card */
+}
+
+/* Styles the summary numbers */
+.summary dl {
+  display: grid; /* Places items in a grid */
+  gap: 0.75rem; /* Space between items */
+  margin: 0;
+}
+
+/* Makes summary labels bold */
+.summary dt {
+  font-weight: bold;
+}
+
+/* Adds spacing below each summary value */
+.summary dd {
+  margin: 0 0 0.5rem;
+  font-size: 1.1rem; /* Makes values easier to read */
+}
+
+/* Arranges the search, filter and sort controls */
+.controls {
+  display: grid;
+  gap: 1rem; /* Space between controls */
+}
+
+/* Makes labels clear and easy to read */
+label {
+  display: block;
+  font-weight: bold;
+  margin-bottom: 0.25rem;
+}
+
+/* Makes form controls easier to use */
+input,
+select {
+  width: 100%; /* Fills the available space */
+  padding: 0.5rem;
+  font-size: 1rem;
+}
+
+/* Allows the table to scroll on small screens */
+.table-wrapper {
+  overflow-x: auto;
+}
+
+/* Styles the members table */
+table {
+  width: 100%;
+  border-collapse: collapse; /* Removes gaps between borders */
+  min-width: 720px; /* Keeps the table readable */
+}
+
+/* Adds borders and spacing to table cells */
+th,
+td {
+  border: 1px solid #d9e1e7;
+  padding: 0.5rem;
+  text-align: left;
+}
+
+/* Gives the table headings a light background */
+thead {
+  background: #e8f0ec;
+}
+
+/* Highlights members who still owe money */
+tr.owes {
+  background: #fdecea; /* Light red background */
+}
+
+/* Makes the word “Owes” stand out */
+.status-owes {
+  font-weight: bold;
+  color: #b3261e; /* Red text */
+}
+
+/* Styles members who are up to date */
+.status-current {
+  color: #14532d; /* Green text */
+  font-weight: bold;
+}
+
+/* Styles members who have paid ahead */
+.status-ahead {
+  color: #1d4ed8; /* Blue text */
+  font-weight: bold;
+}
+
+/* Styles the payment form */
+form {
+  display: grid;
+  gap: 1rem; /* Space between form fields */
+  max-width: 420px; /* Keeps the form a good size */
+}
+
+/* Styles the Record payment button */
+button {
+  padding: 0.65rem;
+  font-size: 1rem;
+  background: #14532d; /* Green button */
+  color: #fff; /* White text */
+  border: none;
+  border-radius: 4px;
+  cursor: pointer; /* Shows a pointer on hover */
+}
+
+/* Changes button colour when the mouse is over it */
+button:hover {
+  background: #0f3d22;
+}
+
+/* Makes confirmation and error messages stand out */
+#form-message {
+  font-weight: bold;
+}
+
+/* Changes the layout on larger screens */
+@media (min-width: 720px) {
+  /* Shows summary items in two columns */
+  .summary dl {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Places search, filter and sort side by side */
+  .controls {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}

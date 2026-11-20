@@ -1,13 +1,170 @@
-<!DOCTYPE html>
+<!-- Tells the browser this is an HTML5 page -->
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>Week 3 Challenge</title>
-  <link rel="stylesheet" href="css/styles.css" />
-</head>
-<body>
-  <h1>Week 3 Challenge</h1>
-  <script src="js/app.js"></script>
-</body>
+  <!-- The head section holds information about the page, not visible content -->
+  <head>
+    <!-- Makes sure the page supports special characters and different languages -->
+    <meta charset="UTF-8" />
+
+    <!-- Helps the page look good on phones and computers -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+    <!-- The name shown on the browser tab -->
+    <title>Umoja Chama Savings Tracker</title>
+
+    <!-- Connects the HTML page to the CSS file -->
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <!-- Everything the user sees on the page goes inside body -->
+  <body>
+    <!-- The top part of the page -->
+    <header>
+      <h1>Umoja Chama Savings Tracker</h1>
+
+      <!-- Short explanation of what the app is for -->
+      <p>Githurai savings group — KSh 1,000 monthly contribution</p>
+    </header>
+
+    <!-- Main content of the page -->
+    <main>
+      <!-- Summary section showing important group information -->
+      <section aria-labelledby="summary-heading" class="summary">
+        <h2 id="summary-heading">Group summary</h2>
+
+        <!-- Description list used to show labelled figures -->
+        <dl>
+          <div>
+            <dt>Total collected</dt>
+            <!-- JavaScript will put the total here -->
+            <dd id="total-collected"></dd>
+          </div>
+
+          <div>
+            <dt>Up to date or ahead</dt>
+            <!-- JavaScript will put the number here -->
+            <dd id="members-current"></dd>
+          </div>
+
+          <div>
+            <dt>Members who owe</dt>
+            <!-- JavaScript will put the number here -->
+            <dd id="members-owing"></dd>
+          </div>
+
+          <div>
+            <dt>Total amount owed</dt>
+            <!-- JavaScript will put the total owed here -->
+            <dd id="total-owed"></dd>
+          </div>
+
+          <div>
+            <dt>Top contributor</dt>
+            <!-- JavaScript will put the member name here -->
+            <dd id="top-contributor"></dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- Search, filter and sort controls -->
+      <section aria-labelledby="controls-heading">
+        <h2 id="controls-heading">Find members</h2>
+
+        <div class="controls">
+          <!-- Search box for name or phone number -->
+          <div>
+            <label for="search-input">Search by name or phone</label>
+            <input
+              id="search-input"
+              type="search"
+              placeholder="e.g. Wanjiru or 07..."
+            />
+          </div>
+
+          <!-- Dropdown to filter members by payment status -->
+          <div>
+            <label for="status-filter">Filter by status</label>
+            <select id="status-filter">
+              <option value="all">All</option>
+              <option value="Owes">Owes</option>
+              <option value="Up to date">Up to date</option>
+              <option value="Ahead">Ahead</option>
+            </select>
+          </div>
+
+          <!-- Dropdown to choose how members are arranged -->
+          <div>
+            <label for="sort-select">Sort members</label>
+            <select id="sort-select">
+              <option value="name">Name: A to Z</option>
+              <option value="balance">Balance: lowest first</option>
+            </select>
+          </div>
+        </div>
+      </section>
+
+      <!-- Table showing all members -->
+      <section aria-labelledby="members-heading">
+        <h2 id="members-heading">Members</h2>
+
+        <!-- Allows the table to scroll sideways on small screens -->
+        <div class="table-wrapper">
+          <table>
+            <!-- Table headings -->
+            <thead>
+              <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Phone</th>
+                <th scope="col">Payments</th>
+                <th scope="col">Total paid</th>
+                <th scope="col">Balance</th>
+                <th scope="col">Status</th>
+              </tr>
+            </thead>
+
+            <!-- JavaScript adds member rows here -->
+            <tbody id="members-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Message shown when no member matches the search or filter -->
+        <p id="no-members" hidden>No members match</p>
+      </section>
+
+      <!-- Form for recording a new payment -->
+      <section aria-labelledby="payment-heading">
+        <h2 id="payment-heading">Record a payment</h2>
+
+        <form id="payment-form" novalidate>
+          <!-- Dropdown listing all members -->
+          <div>
+            <label for="member-select">Member</label>
+            <select id="member-select"></select>
+          </div>
+
+          <!-- Input for the payment amount -->
+          <div>
+            <label for="amount-input">Amount in KSh</label>
+            <input
+              id="amount-input"
+              type="number"
+              min="50"
+              max="100000"
+              step="1"
+              placeholder="e.g. 1000"
+            />
+          </div>
+
+          <!-- Button that saves the payment -->
+          <button type="submit">Record payment</button>
+
+          <!-- Shows success or error messages -->
+          <p id="form-message" role="status"></p>
+        </form>
+      </section>
+    </main>
+
+    <!-- Connects the page to the JavaScript file -->
+    <script src="js/app.js"></script>
+  </body>
 </html>
