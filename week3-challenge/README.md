@@ -68,6 +68,4 @@ Before recording any new payment:
 
 Add a screenshot of your working page here after you open it in the browser.
 
-```text
-
-```
+![alt text](image.png)
