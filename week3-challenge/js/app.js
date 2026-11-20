@@ -1,6 +1,14 @@
+// Monthly contribution expected from every member.
 const MONTHLY_TARGET = 1000;
-const MONTHS_SO_FAR = 3; // January to March
 
+// Number of months covered so far: January, February and March.
+const MONTHS_SO_FAR = 3;
+
+// Total amount each member is expected to have paid by now.
+const EXPECTED_TOTAL = MONTHLY_TARGET * MONTHS_SO_FAR;
+
+// Stores the eight members and their payment records.
+// This is the only place where the member data is kept.
 const members = [
   {
     id: 1,
@@ -14,8 +22,18 @@ const members = [
     phone: "0722111222",
     payments: [1000, 500],
   },
-  { id: 3, name: "Akinyi Achieng", phone: "0733444555", payments: [3200] },
-  { id: 4, name: "Mutua Musyoka", phone: "0700987654", payments: [] },
+  {
+    id: 3,
+    name: "Akinyi Achieng",
+    phone: "0733444555",
+    payments: [3200],
+  },
+  {
+    id: 4,
+    name: "Mutua Musyoka",
+    phone: "0700987654",
+    payments: [],
+  },
   {
     id: 5,
     name: "Chebet Kiprono",
@@ -34,66 +52,11 @@ const members = [
     phone: "0745678901",
     payments: [1000, 1000, 1500],
   },
-  { id: 8, name: "Kibet Langat", phone: "0768123456", payments: [200] },
-];
-// Stores the eight members and their payment records.
-// This is the only place where the member data is kept.
-const members = [
-  {
-    id: 1, // Unique number used to find the member
-    name: "Wanjiru Kamau",
-    phone: "0711000001",
-    expected: 3000, // Total amount the member should have paid
-    payments: [1000, 1000, 1000], // Payments made so far
-  },
-  {
-    id: 2,
-    name: "Akinyi Otieno",
-    phone: "0711000002",
-    expected: 3000,
-    payments: [1200, 1000, 1000],
-  },
-  {
-    id: 3,
-    name: "Njeri Mwangi",
-    phone: "0711000003",
-    expected: 3000,
-    payments: [1500, 1000, 1000],
-  },
-  {
-    id: 4,
-    name: "Otieno Ochieng",
-    phone: "0711000004",
-    expected: 3000,
-    payments: [1500],
-  },
-  {
-    id: 5,
-    name: "Mutua Kilonzo",
-    phone: "0711000005",
-    expected: 3000,
-    payments: [], // Mutua has not made any payment
-  },
-  {
-    id: 6,
-    name: "Kamau Njoroge",
-    phone: "0711000006",
-    expected: 3000,
-    payments: [1000],
-  },
-  {
-    id: 7,
-    name: "Amina Hassan",
-    phone: "0711000007",
-    expected: 3000,
-    payments: [1200],
-  },
   {
     id: 8,
-    name: "Brian Kariuki",
-    phone: "0711000008",
-    expected: 3000,
-    payments: [2000],
+    name: "Kibet Langat",
+    phone: "0768123456",
+    payments: [200],
   },
 ];
 
@@ -123,7 +86,7 @@ function totalPaid(member) {
 // Calculates whether a member has paid enough, too little, or too much.
 // balance = total paid - expected amount.
 function balance(member) {
-  return totalPaid(member) - member.expected;
+  return totalPaid(member) - EXPECTED_TOTAL;
 }
 
 // Decides whether a member owes, is up to date, or is ahead.
@@ -337,7 +300,9 @@ function handlePayment(event) {
   amountInput.value = "";
 
   // Shows a short confirmation message.
-  formMessage.textContent = `Recorded ${formatMoney(amount)} for ${selectedMember.name}.`;
+  formMessage.textContent = `Recorded ${formatMoney(
+    amount,
+  )} for ${selectedMember.name}.`;
 
   // Updates the table and summary with the new payment.
   renderAll();
