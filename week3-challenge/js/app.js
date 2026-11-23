@@ -319,3 +319,51 @@ paymentForm.addEventListener("submit", handlePayment);
 // Builds the dropdown and shows the page when it loads.
 renderMemberOptions();
 renderAll();
+
+// Console tests required by the README.
+// Each function receives one member, except groupTotal(),
+// which receives the full members array.
+
+const akinyi = members.find((member) => member.name === "Akinyi Achieng");
+const chebet = members.find((member) => member.name === "Chebet Kiprono");
+const hassan = members.find((member) => member.name === "Hassan Abdi");
+const kibet = members.find((member) => member.name === "Kibet Langat");
+const mutua = members.find((member) => member.name === "Mutua Musyoka");
+const njeri = members.find((member) => member.name === "Njeri Mwangi");
+const otieno = members.find((member) => member.name === "Otieno Odhiambo");
+const wanjiru = members.find((member) => member.name === "Wanjiru Kamau");
+
+
+console.log(totalPaid(akinyi)); // 3200
+console.log(balance(akinyi)); // 200
+console.log(status(akinyi)); // "Ahead"
+
+console.log(totalPaid(chebet)); // 2000
+console.log(balance(chebet)); // -1000
+console.log(status(chebet)); // "Owes"
+
+console.log(totalPaid(hassan)); // 2000
+console.log(balance(hassan)); // -1000
+console.log(status(hassan)); // "Owes"
+
+console.log(totalPaid(kibet)); // 200
+console.log(balance(kibet)); // -2800
+console.log(status(kibet)); // "Owes"
+
+console.log(totalPaid(mutua)); // 0
+console.log(balance(mutua)); // -3000
+console.log(status(mutua)); // "Owes"
+
+console.log(totalPaid(njeri)); // 3500
+console.log(balance(njeri)); // 500
+console.log(status(njeri)); // "Ahead"
+
+console.log(totalPaid(otieno)); // 1500
+console.log(balance(otieno)); // -1500
+console.log(status(otieno)); // "Owes"
+
+console.log(totalPaid(wanjiru)); // 3000
+console.log(balance(wanjiru)); // 0
+console.log(status(wanjiru)); // "Up to date"
+
+console.log(groupTotal(members)); // 15400
