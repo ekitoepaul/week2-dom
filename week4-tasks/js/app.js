@@ -1,23 +1,72 @@
-const tasks = [
-  { id: 1, title: "Pay KPLC token", done: false, priority: "high" },
-  { id: 2, title: "Buy unga", done: true, priority: "normal" },
-  { id: 3, title: "Revise loops", done: false, priority: "high" },
-  { id: 4, title: "Call mum", done: false, priority: "normal" },
-  {
-    id: 5,
-    title: "Learn about <b> tags in JavaScript",
-    done: false,
-    priority: "normal",
-  },
-];
+// ---- Storage ----
+
+const STORAGE_KEY = "kazi-list-tasks";
+
+function loadTasks() {
+  try {
+    const savedTasks = localStorage.getItem(STORAGE_KEY);
+
+    if (savedTasks === null) {
+      return [];
+    }
+
+    const parsedTasks = JSON.parse(savedTasks);
+
+    if (!Array.isArray(parsedTasks)) {
+      return [];
+    }
+
+    return parsedTasks.filter(
+      (task) =>
+        task &&
+        typeof task.id === "number" &&
+        typeof task.title === "string" &&
+        typeof task.done === "boolean" &&
+        (task.priority === "high" || task.priority === "normal"),
+    );
+  } catch (error) {
+    console.error("Could not load saved tasks:", error);
+    setStatus("Could not load saved tasks.");
+    return [];
+  }
+}
+
+function saveTasks() {
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
+    setStatus("Tasks saved.");
+  } catch (error) {
+    console.error("Could not save tasks:", error);
+    setStatus("Could not save tasks.");
+  }
+}
+
+// ---- State ----
+
+let tasks = loadTasks();
+
+// ---- Elements ----
 
 const list = document.querySelector("#task-list");
 const countEl = document.querySelector("#task-count");
 const template = document.querySelector("#task-template");
 const clearBtn = document.getElementById("clear-done");
 const markAllDoneBtn = document.getElementById("mark-all-done");
+const deleteAllBtn = document.getElementById("delete-all");
+const statusEl = document.getElementById("status");
 
-const STORAGE_KEY = "kazi-list-tasks";
+// ---- Helpers ----
+
+function setStatus(message) {
+  statusEl.textContent = message;
+}
+
+function commit() {
+  saveTasks();
+  renderTasks();
+}
+
+// ---- Rendering ----
 
 function createTaskItem(task) {
   const li = template.content.firstElementChild.cloneNode(true);
@@ -41,10 +90,6 @@ function createTaskItem(task) {
   checkbox.setAttribute("aria-label", `Mark "${task.title}" as done`);
 
   return li;
-}
-
-function saveTasks() {
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
 
 function renderTasks() {
@@ -72,7 +117,10 @@ function renderTasks() {
 
   clearBtn.disabled = !tasks.some((task) => task.done);
   markAllDoneBtn.disabled = tasks.every((task) => task.done);
+  deleteAllBtn.disabled = tasks.length === 0;
 }
+
+// ---- Task actions ----
 
 function clearCompleted() {
   for (let i = tasks.length - 1; i >= 0; i -= 1) {
@@ -81,8 +129,7 @@ function clearCompleted() {
     }
   }
 
-  saveTasks();
-  renderTasks();
+  commit();
 }
 
 function markAllDone() {
@@ -90,8 +137,19 @@ function markAllDone() {
     task.done = true;
   });
 
-  saveTasks();
-  renderTasks();
+  commit();
+}
+
+function deleteAllTasks() {
+  const confirmed = confirm("Delete all tasks?");
+
+  if (!confirmed) {
+    setStatus("Delete all cancelled.");
+    return;
+  }
+
+  tasks = [];
+  commit();
 }
 
 function startEditing(id) {
@@ -102,8 +160,11 @@ function startEditing(id) {
   console.log("Start editing:", task);
 }
 
+// ---- Events ----
+
 clearBtn.addEventListener("click", clearCompleted);
 markAllDoneBtn.addEventListener("click", markAllDone);
+deleteAllBtn.addEventListener("click", deleteAllTasks);
 
 list.addEventListener("click", (event) => {
   const li = event.target.closest(".task");
@@ -114,9 +175,7 @@ list.addEventListener("click", (event) => {
 
   if (event.target.closest(".badge")) {
     task.priority = task.priority === "high" ? "normal" : "high";
-
-    saveTasks();
-    renderTasks();
+    commit();
     return;
   }
 
@@ -137,9 +196,7 @@ list.addEventListener("click", (event) => {
 
   if (event.target.closest(".task-check")) {
     task.done = !task.done;
-
-    saveTasks();
-    renderTasks();
+    commit();
 
     console.log("Toggle:", task);
   }
