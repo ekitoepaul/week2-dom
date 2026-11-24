@@ -14,6 +14,8 @@ const tasks = [
 const list = document.querySelector("#task-list");
 const countEl = document.querySelector("#task-count");
 const template = document.querySelector("#task-template");
+const clearBtn = document.getElementById("clear-done");
+const markAllDoneBtn = document.getElementById("mark-all-done");
 
 function createTaskItem(task) {
   const li = template.content.firstElementChild.cloneNode(true);
@@ -27,6 +29,10 @@ function createTaskItem(task) {
 
   const badge = li.querySelector(".badge");
   badge.textContent = task.priority === "high" ? "High" : "Normal";
+  badge.setAttribute(
+    "aria-label",
+    `Change priority for "${task.title}". Current priority: ${task.priority}`,
+  );
 
   const checkbox = li.querySelector(".task-check");
   checkbox.checked = task.done;
@@ -45,11 +51,51 @@ function renderTasks() {
     list.append(empty);
   }
 
-  tasks.forEach((task) => list.append(createTaskItem(task)));
+  const sortedTasks = tasks.toSorted((a, b) => {
+    if (a.priority === b.priority) {
+      return 0;
+    }
+
+    return a.priority === "high" ? -1 : 1;
+  });
+
+  sortedTasks.forEach((task) => list.append(createTaskItem(task)));
 
   const left = tasks.filter((task) => !task.done).length;
   countEl.textContent = `${left} of ${tasks.length} tasks left`;
+
+  clearBtn.disabled = !tasks.some((task) => task.done);
+  markAllDoneBtn.disabled = tasks.every((task) => task.done);
 }
+
+function clearCompleted() {
+  for (let i = tasks.length - 1; i >= 0; i -= 1) {
+    if (tasks[i].done) {
+      tasks.splice(i, 1);
+    }
+  }
+
+  renderTasks();
+}
+
+function markAllDone() {
+  tasks.forEach((task) => {
+    task.done = true;
+  });
+
+  renderTasks();
+}
+
+function startEditing(id) {
+  const task = tasks.find((item) => item.id === id);
+
+  if (!task) return;
+
+  console.log("Start editing:", task);
+}
+
+clearBtn.addEventListener("click", clearCompleted);
+markAllDoneBtn.addEventListener("click", markAllDone);
 
 list.addEventListener("click", (event) => {
   const li = event.target.closest(".task");
@@ -57,6 +103,17 @@ list.addEventListener("click", (event) => {
 
   const task = tasks.find((item) => item.id === Number(li.dataset.id));
   if (!task) return;
+
+  if (event.target.closest(".badge")) {
+    task.priority = task.priority === "high" ? "normal" : "high";
+    renderTasks();
+    return;
+  }
+
+  if (event.target.closest(".edit-btn")) {
+    startEditing(task.id);
+    return;
+  }
 
   if (event.target.closest(".delete-btn")) {
     console.log("Delete:", task);
@@ -70,10 +127,7 @@ list.addEventListener("click", (event) => {
 
   if (event.target.closest(".task-check")) {
     task.done = !task.done;
-    li.classList.toggle("done", task.done);
-
-    const left = tasks.filter((item) => !item.done).length;
-    countEl.textContent = `${left} of ${tasks.length} tasks left`;
+    renderTasks();
 
     console.log("Toggle:", task);
   }
