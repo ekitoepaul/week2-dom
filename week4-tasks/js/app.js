@@ -17,6 +17,8 @@ const template = document.querySelector("#task-template");
 const clearBtn = document.getElementById("clear-done");
 const markAllDoneBtn = document.getElementById("mark-all-done");
 
+const STORAGE_KEY = "kazi-list-tasks";
+
 function createTaskItem(task) {
   const li = template.content.firstElementChild.cloneNode(true);
 
@@ -39,6 +41,10 @@ function createTaskItem(task) {
   checkbox.setAttribute("aria-label", `Mark "${task.title}" as done`);
 
   return li;
+}
+
+function saveTasks() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(tasks));
 }
 
 function renderTasks() {
@@ -75,6 +81,7 @@ function clearCompleted() {
     }
   }
 
+  saveTasks();
   renderTasks();
 }
 
@@ -83,6 +90,7 @@ function markAllDone() {
     task.done = true;
   });
 
+  saveTasks();
   renderTasks();
 }
 
@@ -106,6 +114,8 @@ list.addEventListener("click", (event) => {
 
   if (event.target.closest(".badge")) {
     task.priority = task.priority === "high" ? "normal" : "high";
+
+    saveTasks();
     renderTasks();
     return;
   }
@@ -127,6 +137,8 @@ list.addEventListener("click", (event) => {
 
   if (event.target.closest(".task-check")) {
     task.done = !task.done;
+
+    saveTasks();
     renderTasks();
 
     console.log("Toggle:", task);
