@@ -24,10 +24,14 @@ body {
 
 .card-header {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
   margin-bottom: 20px;
+}
+
+.header-main {
+  min-width: 0;
 }
 
 h1 {
@@ -39,6 +43,26 @@ h1 {
   margin: 0;
   color: #64748b;
   font-size: 0.9rem;
+}
+
+.clock {
+  flex-shrink: 0;
+  text-align: right;
+}
+
+.today-date {
+  margin: 0;
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #475569;
+}
+
+.live-clock {
+  margin: 2px 0 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #1e293b;
+  font-variant-numeric: tabular-nums;
 }
 
 .task-list {
@@ -140,6 +164,15 @@ button:focus-visible {
 }
 
 @media (max-width: 480px) {
+  .card-header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .clock {
+    text-align: left;
+  }
+
   .task {
     flex-wrap: wrap;
   }
@@ -180,4 +213,46 @@ button:focus-visible {
   border-radius: 0.5rem;
   background: #f7f7f7;
   white-space: pre;
+}
+
+/* ---- Due dates ---- */
+
+.due {
+  color: #57606a;
+  font-size: 0.85rem;
+}
+
+.task.overdue {
+  border-left: 4px solid #b91c1c;
+  background-color: #fef2f2;
+}
+
+.task.overdue .task-title,
+.task.overdue .due {
+  color: #b91c1c;
+  font-weight: 700;
+}
+
+.task.overdue .due {
+  color: #b91c1c;
+}
+
+/* ---- Created dates and summary ---- */
+
+.created {
+  flex-shrink: 0;
+  color: #64748b;
+  font-size: 0.75rem;
+  white-space: nowrap;
+}
+
+.task-summary {
+  margin: 12px 0 0;
+  padding: 10px 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  background: #f8fafc;
+  color: #334155;
+  font-size: 0.9rem;
+  font-weight: 600;
 }

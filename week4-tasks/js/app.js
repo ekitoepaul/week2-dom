@@ -77,6 +77,7 @@ function loadLastPriority() {
 function saveLastPriority(priority) {
   try {
     localStorage.setItem(PRIORITY_KEY, priority);
+    setStatus("Priority preference saved.");
   } catch (error) {
     console.error("Could not save priority:", error);
     setStatus("Could not save priority.");
@@ -88,16 +89,21 @@ function saveLastPriority(priority) {
 let tasks = loadTasks();
 let userName = loadName();
 let lastPriority = loadLastPriority();
+let editingId = null;
 
 // ---- Elements ----
 
 const list = document.querySelector("#task-list");
 const countEl = document.querySelector("#task-count");
+const summaryEl = document.querySelector("#task-summary");
 const template = document.querySelector("#task-template");
 const clearBtn = document.getElementById("clear-done");
 const markAllDoneBtn = document.getElementById("mark-all-done");
 const deleteAllBtn = document.getElementById("delete-all");
 const statusEl = document.getElementById("status");
+
+const todayDateEl = document.getElementById("today-date");
+const liveClockEl = document.getElementById("live-clock");
 
 const greetingEl = document.getElementById("greeting");
 const nameForm = document.getElementById("name-form");
@@ -106,12 +112,92 @@ const nameInput = document.getElementById("user-name");
 const addForm = document.getElementById("add-form");
 const newTitleInput = document.getElementById("new-title");
 const newPriorityInput = document.getElementById("new-priority");
+const newDueInput = document.getElementById("new-due");
 const addErrorEl = document.getElementById("add-error");
 
 const exportBtn = document.getElementById("export-tasks");
 const exportOutput = document.getElementById("export-output");
 
+// ---- Dates ----
+
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+function startOfToday() {
+  const now = new Date();
+
+  return new Date(now.getFullYear(), now.getMonth(), now.getDate());
+}
+
+function daysUntil(dueDate) {
+  if (!dueDate) {
+    return null;
+  }
+
+  const due = new Date(`${dueDate}T00:00:00`);
+  const today = startOfToday();
+
+  return Math.round((due.getTime() - today.getTime()) / MS_PER_DAY);
+}
+
+function formatDate(dueDate) {
+  if (!dueDate) {
+    return "";
+  }
+
+  const due = new Date(`${dueDate}T00:00:00`);
+
+  return due.toLocaleDateString(undefined, {
+    weekday: "short",
+    day: "numeric",
+    month: "short",
+    year: "numeric",
+  });
+}
+
+function formatCreatedDate(createdAt) {
+  if (!createdAt) {
+    return "";
+  }
+
+  const created = new Date(createdAt);
+
+  if (Number.isNaN(created.getTime())) {
+    return "";
+  }
+
+  const day = String(created.getDate()).padStart(2, "0");
+  const month = String(created.getMonth() + 1).padStart(2, "0");
+
+  return `${day}/${month}/${created.getFullYear()}`;
+}
+
+function dueLabel(dueDate) {
+  const days = daysUntil(dueDate);
+
+  if (days === null) {
+    return "";
+  }
+
+  if (days < 0) {
+    return `Overdue by ${Math.abs(days)} day${Math.abs(days) === 1 ? "" : "s"}`;
+  }
+
+  if (days === 0) {
+    return "Due today";
+  }
+
+  if (days === 1) {
+    return "Due tomorrow";
+  }
+
+  return `Due in ${days} days — ${formatDate(dueDate)}`;
+}
+
 // ---- Helpers ----
+
+function showStatus(message) {
+  statusEl.textContent = message;
+}
 
 function setStatus(message) {
   statusEl.textContent = message;
@@ -120,6 +206,25 @@ function setStatus(message) {
 function commit() {
   saveTasks();
   renderTasks();
+}
+
+// ---- Clock ----
+
+function renderClock() {
+  const now = new Date();
+
+  todayDateEl.textContent = now.toLocaleDateString(undefined, {
+    weekday: "long",
+    day: "numeric",
+    month: "long",
+    year: "numeric",
+  });
+
+  liveClockEl.textContent = now.toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+  });
 }
 
 // ---- Name ----
@@ -141,14 +246,14 @@ function handleNameSubmit(event) {
   const name = nameInput.value.trim();
 
   if (!name) {
-    setStatus("Please enter your name.");
+    showStatus("Please enter your name.");
     return;
   }
 
   userName = name;
   saveName(userName);
   renderName();
-  setStatus(`Name saved. Karibu, ${userName}!`);
+  showStatus(`Name saved. Karibu, ${userName}!`);
 }
 
 // ---- Rendering ----
@@ -160,6 +265,12 @@ function createTaskItem(task) {
   li.dataset.priority = task.priority;
   li.classList.toggle("done", task.done);
 
+  const dueDays = daysUntil(task.dueDate);
+
+  if (!task.done && dueDays !== null && dueDays < 0) {
+    li.classList.add("overdue");
+  }
+
   const title = li.querySelector(".task-title");
   title.textContent = task.title;
 
@@ -170,11 +281,49 @@ function createTaskItem(task) {
     `Change priority for "${task.title}". Current priority: ${task.priority}`,
   );
 
+  const due = li.querySelector(".due");
+  due.dateTime = task.dueDate || "";
+  due.textContent = dueLabel(task.dueDate);
+
+  const created = li.querySelector(".created");
+  created.textContent = task.createdAt
+    ? `Added ${formatCreatedDate(task.createdAt)}`
+    : "";
+
   const checkbox = li.querySelector(".task-check");
   checkbox.checked = task.done;
   checkbox.setAttribute("aria-label", `Mark "${task.title}" as done`);
 
   return li;
+}
+
+function renderSummary() {
+  const overdueCount = tasks.filter(
+    (task) => !task.done && daysUntil(task.dueDate) < 0,
+  ).length;
+
+  const dueTodayCount = tasks.filter(
+    (task) => !task.done && daysUntil(task.dueDate) === 0,
+  ).length;
+
+  const summaryParts = [];
+
+  if (overdueCount > 0) {
+    summaryParts.push(`${overdueCount} overdue${overdueCount === 1 ? "" : ""}`);
+  }
+
+  if (dueTodayCount > 0) {
+    summaryParts.push(
+      `${dueTodayCount} due today${dueTodayCount === 1 ? "" : ""}`,
+    );
+  }
+
+  if (summaryParts.length === 0) {
+    summaryEl.textContent = "No overdue or due-today tasks.";
+    return;
+  }
+
+  summaryEl.textContent = summaryParts.join(", ");
 }
 
 function renderTasks() {
@@ -200,6 +349,8 @@ function renderTasks() {
   const left = tasks.filter((task) => !task.done).length;
   countEl.textContent = `${left} of ${tasks.length} tasks left`;
 
+  renderSummary();
+
   clearBtn.disabled = !tasks.some((task) => task.done);
   markAllDoneBtn.disabled = tasks.every((task) => task.done);
   deleteAllBtn.disabled = tasks.length === 0;
@@ -215,6 +366,7 @@ function clearCompleted() {
   }
 
   commit();
+  showStatus("Completed tasks cleared");
 }
 
 function markAllDone() {
@@ -229,18 +381,19 @@ function deleteAllTasks() {
   const confirmed = confirm("Delete all tasks?");
 
   if (!confirmed) {
-    setStatus("Delete all cancelled.");
+    showStatus("Delete all cancelled.");
     return;
   }
 
   tasks = [];
   commit();
+  showStatus("Tasks deleted");
 }
 
 function exportTasks() {
   exportOutput.textContent = JSON.stringify(tasks, null, 2);
   exportOutput.hidden = false;
-  setStatus("Tasks exported below. Copy the JSON to make a backup.");
+  showStatus("Tasks exported below. Copy the JSON to make a backup.");
 }
 
 function startEditing(id) {
@@ -248,6 +401,7 @@ function startEditing(id) {
 
   if (!task) return;
 
+  editingId = id;
   console.log("Start editing:", task);
 }
 
@@ -265,6 +419,7 @@ addForm.addEventListener("submit", (event) => {
 
   const title = newTitleInput.value.trim();
   const priority = newPriorityInput.value;
+  const dueDate = newDueInput.value;
 
   if (!title) {
     addErrorEl.textContent = "Please enter a task title.";
@@ -276,14 +431,18 @@ addForm.addEventListener("submit", (event) => {
     title,
     done: false,
     priority,
+    dueDate,
+    createdAt: new Date().toISOString(),
   });
 
   lastPriority = priority;
   saveLastPriority(lastPriority);
 
   newTitleInput.value = "";
+  newDueInput.value = "";
   addErrorEl.textContent = "";
   commit();
+  showStatus("Task added");
 });
 
 list.addEventListener("click", (event) => {
@@ -305,7 +464,14 @@ list.addEventListener("click", (event) => {
   }
 
   if (event.target.closest(".delete-btn")) {
-    console.log("Delete:", task);
+    const taskIndex = tasks.findIndex((item) => item.id === task.id);
+
+    if (taskIndex !== -1) {
+      tasks.splice(taskIndex, 1);
+      commit();
+      showStatus("Task deleted");
+    }
+
     return;
   }
 
@@ -317,13 +483,25 @@ list.addEventListener("click", (event) => {
   if (event.target.closest(".task-check")) {
     task.done = !task.done;
     commit();
-
-    console.log("Toggle:", task);
   }
 });
 
-// ---- Initial render ----
+// ---- Start ----
 
 newPriorityInput.value = lastPriority;
 renderName();
+renderClock();
 renderTasks();
+
+let shownDay = startOfToday().getTime();
+
+setInterval(renderClock, 1000);
+
+setInterval(() => {
+  const today = startOfToday().getTime();
+
+  if (today !== shownDay && editingId === null) {
+    shownDay = today;
+    renderTasks();
+  }
+}, 60000);
