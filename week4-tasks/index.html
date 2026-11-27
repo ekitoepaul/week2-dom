@@ -3,9 +3,10 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#f1f5f9" />
     <title>Kazi List</title>
-
     <link rel="stylesheet" href="css/styles.css" />
+    <script src="js/app.js" defer></script>
   </head>
 
   <body>
@@ -13,12 +14,11 @@
       <header class="card-header">
         <div class="header-main">
           <h1>Kazi List</h1>
-
           <p id="greeting" class="greeting" hidden></p>
-          <p id="task-count" class="task-count"></p>
+          <p id="task-count" class="task-count" aria-live="polite"></p>
         </div>
 
-        <div class="clock">
+        <div class="clock" aria-label="Current date and time">
           <p id="today-date" class="today-date"></p>
           <p id="live-clock" class="live-clock"></p>
         </div>
@@ -26,50 +26,135 @@
 
       <form id="name-form" class="name-form">
         <label for="user-name">What is your name?</label>
-        <input
-          type="text"
-          id="user-name"
-          maxlength="40"
-          autocomplete="given-name"
-          required
-        />
-
-        <button type="submit">Save name</button>
+        <div class="name-form-controls">
+          <input
+            type="text"
+            id="user-name"
+            maxlength="40"
+            autocomplete="given-name"
+            required
+          />
+          <button type="submit">Save name</button>
+        </div>
       </form>
 
-      <ul id="task-list" class="task-list"></ul>
+      <section class="task-tools" aria-label="Find and filter tasks">
+        <label for="search-input">Search tasks</label>
+        <input
+          type="search"
+          id="search-input"
+          placeholder="Search by task name… (press /)"
+          autocomplete="off"
+        />
+
+        <div class="filter-heading">
+          <span>Filter tasks</span>
+          <span class="filter-hint">Choose a view</span>
+        </div>
+        <div
+          id="filter-buttons"
+          class="filter-buttons"
+          aria-label="Task filters"
+        >
+          <button
+            type="button"
+            class="filter-btn"
+            data-filter="all"
+            aria-pressed="true"
+          >
+            All
+          </button>
+          <button
+            type="button"
+            class="filter-btn"
+            data-filter="open"
+            aria-pressed="false"
+          >
+            To do
+          </button>
+          <button
+            type="button"
+            class="filter-btn"
+            data-filter="done"
+            aria-pressed="false"
+          >
+            Completed
+          </button>
+          <button
+            type="button"
+            class="filter-btn"
+            data-filter="overdue"
+            aria-pressed="false"
+          >
+            Overdue
+          </button>
+          <button
+            type="button"
+            class="filter-btn"
+            data-filter="today"
+            aria-pressed="false"
+          >
+            Due today
+          </button>
+          <button
+            type="button"
+            class="filter-btn"
+            data-filter="week"
+            aria-pressed="false"
+          >
+            Due this week
+          </button>
+        </div>
+      </section>
+
+      <ul id="task-list" class="task-list" aria-label="Your tasks"></ul>
 
       <p id="task-summary" class="task-summary" aria-live="polite"></p>
 
       <div class="list-actions">
         <button type="button" id="mark-all-done">Mark all done</button>
         <button type="button" id="clear-done">Clear completed</button>
-        <button type="button" id="delete-all">Delete all tasks</button>
+        <button type="button" id="delete-all" class="danger-button">
+          Delete all tasks
+        </button>
         <button type="button" id="export-tasks">Export</button>
       </div>
 
       <pre id="export-output" class="export-output" hidden></pre>
     </main>
 
-    <form id="add-form">
-      <label for="new-title">New task</label>
-      <input type="text" id="new-title" maxlength="80" autocomplete="off" />
+    <section class="add-card" aria-labelledby="add-heading">
+      <h2 id="add-heading">Add a task</h2>
+      <form id="add-form">
+        <label for="new-title">New task</label>
+        <input
+          type="text"
+          id="new-title"
+          maxlength="80"
+          autocomplete="off"
+          required
+        />
 
-      <label for="new-priority">Priority</label>
-      <select id="new-priority">
-        <option value="normal">Normal</option>
-        <option value="high">High</option>
-      </select>
+        <div class="form-row">
+          <div>
+            <label for="new-priority">Priority</label>
+            <select id="new-priority">
+              <option value="normal">Normal</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div>
+            <label for="new-due">Due date (optional)</label>
+            <input type="date" id="new-due" />
+          </div>
+        </div>
 
-      <label for="new-due">Due date (optional)</label>
-      <input type="date" id="new-due" />
+        <button type="submit" class="primary-button">Add task</button>
+        <p id="add-error" class="error" aria-live="polite"></p>
+      </form>
+    </section>
 
-      <button type="submit">Add task</button>
-
-      <p id="add-error" class="error" aria-live="polite"></p>
-    </form>
-
-    <p id="status" aria-live="polite"></p>
+    <p id="status" class="status-message" role="status" aria-live="polite"></p>
 
     <template id="task-template">
       <li class="task">
@@ -79,9 +164,7 @@
         </label>
 
         <button class="badge" type="button"></button>
-
         <time class="due"></time>
-
         <span class="created"></span>
 
         <div class="task-actions">
@@ -91,7 +174,5 @@
         </div>
       </li>
     </template>
-
-    <script src="js/app.js"></script>
   </body>
 </html>
