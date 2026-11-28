@@ -1,0 +1,293 @@
+/* Design colours used across the app */
+:root {
+  --green: #166534;
+  --amber: #92400e;
+  --red: #991b1b;
+  --blue: #1d4ed8;
+  --border: #d4d4d8;
+  --background: #f4f4f5;
+  --card: #ffffff;
+  --text: #18181b;
+}
+
+/* Make sizing predictable across browsers */
+* {
+  box-sizing: border-box;
+}
+
+/* Basic page styling */
+body {
+  margin: 0;
+  font-family: system-ui, Arial, sans-serif;
+  background: var(--background);
+  color: var(--text);
+  line-height: 1.5;
+}
+
+/* Header */
+.app-header {
+  background: var(--green);
+  color: white;
+  padding: 1.25rem;
+  text-align: center;
+}
+
+.app-header p {
+  margin: 0.25rem 0 0;
+}
+
+/* Main content container */
+.container {
+  width: 100%;
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+
+/* Cards and panels */
+.panel,
+.summary {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+h1,
+h2,
+h3,
+p {
+  margin-top: 0;
+}
+
+/* Summary grid */
+.summary-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+  margin: 0;
+}
+
+.summary-grid div {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.75rem;
+}
+
+.summary-grid dt {
+  font-size: 0.85rem;
+  color: #52525b;
+}
+
+.summary-grid dd {
+  margin: 0;
+  font-size: 1.15rem;
+  font-weight: 700;
+}
+
+/* Form fields */
+.field {
+  margin-bottom: 0.85rem;
+}
+
+label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 0.25rem;
+}
+
+input,
+select {
+  width: 100%;
+  padding: 0.65rem;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 1rem;
+  background: white;
+}
+
+/* Visible focus for keyboard users */
+input:focus-visible,
+select:focus-visible,
+button:focus-visible {
+  outline: 3px solid var(--blue);
+  outline-offset: 2px;
+}
+
+/* Two fields side by side on wider screens */
+.field-row {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+/* Accessible validation messages */
+.error {
+  color: var(--red);
+  font-size: 0.9rem;
+  margin: 0.25rem 0 0;
+}
+
+/* Buttons */
+.primary-button,
+.secondary-button,
+.action-button,
+.filter-button {
+  font: inherit;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.6rem 0.85rem;
+  cursor: pointer;
+  background: white;
+}
+
+.primary-button {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+  width: 100%;
+}
+
+.secondary-button {
+  background: #e4e4e7;
+}
+
+.filter-button {
+  margin: 0 0.4rem 0.4rem 0;
+}
+
+/* Selected filter button */
+.filter-button[aria-pressed="true"] {
+  background: var(--green);
+  border-color: var(--green);
+  color: white;
+}
+
+/* Search and filter controls */
+.controls {
+  margin-bottom: 1rem;
+}
+
+/* Product list */
+.product-list,
+.sales-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+/* Individual product card */
+.product-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.9rem;
+  margin-bottom: 0.85rem;
+}
+
+.product-name {
+  margin-bottom: 0.15rem;
+}
+
+.product-category {
+  color: #52525b;
+  margin: 0;
+}
+
+/* Status is always shown as readable text */
+.product-status {
+  display: inline-block;
+  font-weight: 700;
+  margin: 0.5rem 0;
+}
+
+.status-in-stock {
+  color: var(--green);
+}
+
+.status-low-stock {
+  color: var(--amber);
+}
+
+.status-out-of-stock {
+  color: var(--red);
+}
+
+/* Product details */
+.product-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+  margin: 0 0 0.75rem;
+}
+
+.product-details dt {
+  font-size: 0.8rem;
+  color: #52525b;
+}
+
+.product-details dd {
+  margin: 0;
+  font-weight: 600;
+}
+
+/* Product action buttons */
+.product-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+/* Disabled Sell button */
+.sell-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.delete-button {
+  color: var(--red);
+}
+
+/* Empty state */
+.empty-message {
+  background: #fef3c7;
+  border: 1px solid #fcd34d;
+  color: var(--amber);
+  padding: 0.75rem;
+  border-radius: 8px;
+}
+
+/* Sales list */
+.sales-list li {
+  border-bottom: 1px solid var(--border);
+  padding: 0.5rem 0;
+}
+
+/* Edit dialog */
+dialog {
+  border: none;
+  border-radius: 12px;
+  padding: 1rem;
+  width: min(92vw, 420px);
+}
+
+dialog::backdrop {
+  background: rgba(0, 0, 0, 0.5);
+}
+
+.dialog-actions {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+/* Improve layout on larger screens */
+@media (min-width: 480px) {
+  .product-actions {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .summary-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
