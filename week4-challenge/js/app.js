@@ -54,8 +54,10 @@ function loadData() {
     console.error("Could not load saved data:", error);
   }
 
-  // Sample products are added only on the first visit
-  if (products.length === 0) {
+  // Add sample products only if this is the first visit
+  const isFirstVisit = localStorage.getItem(STORAGE_KEYS.products) === null;
+
+  if (isFirstVisit) {
     products = createSampleProducts();
   }
 
@@ -288,12 +290,14 @@ function clearErrors(form) {
     errorElement.textContent = "";
     errorElement.hidden = true;
   });
+
+  form
+    .querySelectorAll("[aria-invalid='true']")
+    .forEach((field) => field.removeAttribute("aria-invalid"));
 }
 
 /**
  * Shows an error message beside a form field.
- * The error element ID must match the field name, for example:
- * "buy-price" uses "#buy-price-error".
  * @param {HTMLFormElement} form
  * @param {string} fieldName
  * @param {string} message
@@ -301,7 +305,6 @@ function clearErrors(form) {
 function showError(form, fieldName, message) {
   const errorElement = form.querySelector(`#${fieldName}-error`);
 
-  // Prevents the app from crashing if an error paragraph is missing
   if (!errorElement) {
     console.warn(`Missing error element: #${fieldName}-error`);
     return;
@@ -309,6 +312,20 @@ function showError(form, fieldName, message) {
 
   errorElement.textContent = message;
   errorElement.hidden = false;
+
+  const fieldIdMap = {
+    name: "product-name",
+    "buy-price": "buy-price",
+    "sell-price": "sell-price",
+    quantity: "quantity",
+    "reorder-level": "reorder-level",
+  };
+
+  const field = form.querySelector(`#${fieldIdMap[fieldName]}`);
+
+  if (field) {
+    field.setAttribute("aria-invalid", "true");
+  }
 }
 
 /**
@@ -318,8 +335,23 @@ function showError(form, fieldName, message) {
 function focusFirstError(form) {
   const firstError = form.querySelector(".error:not([hidden])");
 
-  if (firstError) {
-    const field = form.querySelector(`#${firstError.id.replace("-error", "")}`);
+  if (!firstError) {
+    return;
+  }
+
+  // Maps an error ID to the correct input ID
+  const fieldIdMap = {
+    "name-error": "product-name",
+    "buy-price-error": "buy-price",
+    "sell-price-error": "sell-price",
+    "quantity-error": "quantity",
+    "reorder-level-error": "reorder-level",
+  };
+
+  const fieldId = fieldIdMap[firstError.id];
+
+  if (fieldId) {
+    const field = form.querySelector(`#${fieldId}`);
 
     if (field) {
       field.focus();

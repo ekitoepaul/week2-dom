@@ -70,13 +70,18 @@
               name="name"
               type="text"
               autocomplete="off"
+              aria-describedby="name-error"
             />
             <p class="error" id="name-error" hidden></p>
           </div>
 
           <div class="field">
             <label for="product-category">Category</label>
-            <select id="product-category" name="category">
+            <select
+              id="product-category"
+              name="category"
+              aria-describedby="category-error"
+            >
               <option value="">Choose a category</option>
               <option value="Food">Food</option>
               <option value="Drinks">Drinks</option>
@@ -95,6 +100,7 @@
                 type="number"
                 min="0"
                 step="0.01"
+                aria-describedby="buy-price-error"
               />
               <p class="error" id="buy-price-error" hidden></p>
             </div>
@@ -107,6 +113,7 @@
                 type="number"
                 min="0"
                 step="0.01"
+                aria-describedby="sell-price-error"
               />
               <p class="error" id="sell-price-error" hidden></p>
             </div>
@@ -121,6 +128,7 @@
                 type="number"
                 min="0"
                 step="1"
+                aria-describedby="quantity-error"
               />
               <p class="error" id="quantity-error" hidden></p>
             </div>
@@ -133,6 +141,7 @@
                 type="number"
                 min="0"
                 step="1"
+                aria-describedby="reorder-level-error"
               />
               <p class="error" id="reorder-level-error" hidden></p>
             </div>
@@ -200,7 +209,12 @@
 
         <div class="field">
           <label for="edit-name">Product name</label>
-          <input id="edit-name" name="name" type="text" />
+          <input
+            id="edit-name"
+            name="name"
+            type="text"
+            aria-describedby="name-error"
+          />
           <p class="error" id="name-error" hidden></p>
         </div>
 
@@ -213,6 +227,7 @@
               type="number"
               min="0"
               step="0.01"
+              aria-describedby="buy-price-error"
             />
             <p class="error" id="buy-price-error" hidden></p>
           </div>
@@ -225,6 +240,7 @@
               type="number"
               min="0"
               step="0.01"
+              aria-describedby="sell-price-error"
             />
             <p class="error" id="sell-price-error" hidden></p>
           </div>
@@ -238,6 +254,7 @@
             type="number"
             min="0"
             step="1"
+            aria-describedby="reorder-level-error"
           />
           <p class="error" id="reorder-level-error" hidden></p>
         </div>
