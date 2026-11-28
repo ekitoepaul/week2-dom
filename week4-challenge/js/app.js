@@ -54,7 +54,7 @@ function loadData() {
     console.error("Could not load saved data:", error);
   }
 
-  // Sample data is added only on the first visit
+  // Sample products are added only on the first visit
   if (products.length === 0) {
     products = createSampleProducts();
   }
@@ -292,12 +292,21 @@ function clearErrors(form) {
 
 /**
  * Shows an error message beside a form field.
+ * The error element ID must match the field name, for example:
+ * "buy-price" uses "#buy-price-error".
  * @param {HTMLFormElement} form
  * @param {string} fieldName
  * @param {string} message
  */
 function showError(form, fieldName, message) {
   const errorElement = form.querySelector(`#${fieldName}-error`);
+
+  // Prevents the app from crashing if an error paragraph is missing
+  if (!errorElement) {
+    console.warn(`Missing error element: #${fieldName}-error`);
+    return;
+  }
+
   errorElement.textContent = message;
   errorElement.hidden = false;
 }
@@ -325,51 +334,109 @@ function focusFirstError(form) {
 
 /**
  * Creates starter products for Mama Wairimu's first visit.
- * @returns {Array}
+ * @returns {Array} A list of sample products.
  */
 function createSampleProducts() {
-  const today = getTodayISODate();
-
   return [
     {
-      id: createProductId(),
+      id: 1,
       name: "Unga (2kg)",
       category: "Food",
       buyPrice: 180,
       sellPrice: 210,
       quantity: 24,
       reorderLevel: 10,
-      lastRestocked: today,
+      lastRestocked: "2026-11-28",
     },
     {
-      id: createProductId(),
+      id: 2,
       name: "Cooking oil (1L)",
       category: "Food",
       buyPrice: 280,
       sellPrice: 350,
       quantity: 3,
       reorderLevel: 5,
-      lastRestocked: today,
+      lastRestocked: "2026-11-28",
     },
     {
-      id: createProductId(),
+      id: 3,
       name: "Sugar (1kg)",
       category: "Food",
       buyPrice: 130,
       sellPrice: 170,
       quantity: 0,
       reorderLevel: 4,
-      lastRestocked: today,
+      lastRestocked: "2026-11-27",
     },
     {
-      id: createProductId(),
+      id: 4,
+      name: "Rice (2kg)",
+      category: "Food",
+      buyPrice: 250,
+      sellPrice: 320,
+      quantity: 15,
+      reorderLevel: 6,
+      lastRestocked: "2026-11-26",
+    },
+    {
+      id: 5,
+      name: "Soda (500ml)",
+      category: "Drinks",
+      buyPrice: 45,
+      sellPrice: 70,
+      quantity: 36,
+      reorderLevel: 12,
+      lastRestocked: "2026-11-28",
+    },
+    {
+      id: 6,
+      name: "Water (500ml)",
+      category: "Drinks",
+      buyPrice: 20,
+      sellPrice: 30,
+      quantity: 48,
+      reorderLevel: 24,
+      lastRestocked: "2026-11-28",
+    },
+    {
+      id: 7,
       name: "Bar soap",
       category: "Household",
       buyPrice: 70,
       sellPrice: 100,
       quantity: 20,
       reorderLevel: 6,
-      lastRestocked: today,
+      lastRestocked: "2026-11-25",
+    },
+    {
+      id: 8,
+      name: "Washing powder (500g)",
+      category: "Household",
+      buyPrice: 150,
+      sellPrice: 200,
+      quantity: 2,
+      reorderLevel: 5,
+      lastRestocked: "2026-11-28",
+    },
+    {
+      id: 9,
+      name: "Toothpaste",
+      category: "Personal care",
+      buyPrice: 90,
+      sellPrice: 130,
+      quantity: 10,
+      reorderLevel: 4,
+      lastRestocked: "2026-11-27",
+    },
+    {
+      id: 10,
+      name: "Toilet paper",
+      category: "Household",
+      buyPrice: 35,
+      sellPrice: 50,
+      quantity: 0,
+      reorderLevel: 8,
+      lastRestocked: "2026-11-26",
     },
   ];
 }
