@@ -1,0 +1,302 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Basic page setup and mobile responsiveness -->
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="A simple stock manager for Mama Wairimu's duka."
+    />
+    <title>Duka Stock Manager</title>
+    <link rel="stylesheet" href="css/styles.css" />
+  </head>
+
+  <body>
+    <!-- App header -->
+    <header class="app-header">
+      <h1>Duka Stock Manager</h1>
+      <p>Track stock, sales, restocking and profit for Mama Wairimu’s duka.</p>
+    </header>
+
+    <main class="container">
+      <!-- Summary panel -->
+      <section class="summary" aria-labelledby="summary-heading">
+        <h2 id="summary-heading">Today’s summary</h2>
+
+        <dl class="summary-grid">
+          <div>
+            <dt>Products</dt>
+            <dd id="summary-products">0</dd>
+          </div>
+
+          <div>
+            <dt>Units in stock</dt>
+            <dd id="summary-units">0</dd>
+          </div>
+
+          <div>
+            <dt>Stock value</dt>
+            <dd id="summary-stock-value">KSh 0</dd>
+          </div>
+
+          <div>
+            <dt>Potential profit</dt>
+            <dd id="summary-profit">KSh 0</dd>
+          </div>
+
+          <div>
+            <dt>Sales today</dt>
+            <dd id="summary-sales-count">0</dd>
+          </div>
+
+          <div>
+            <dt>Sales value today</dt>
+            <dd id="summary-sales-value">KSh 0</dd>
+          </div>
+        </dl>
+      </section>
+
+      <!-- Add product form -->
+      <section class="panel" aria-labelledby="add-heading">
+        <h2 id="add-heading">Add a product</h2>
+
+        <!-- novalidate lets JavaScript show custom accessible error messages -->
+        <form id="product-form" novalidate>
+          <div class="field">
+            <label for="product-name">Product name</label>
+            <input
+              id="product-name"
+              name="name"
+              type="text"
+              autocomplete="off"
+            />
+            <p class="error" id="name-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="product-category">Category</label>
+            <select id="product-category" name="category">
+              <option value="">Choose a category</option>
+              <option value="Food">Food</option>
+              <option value="Drinks">Drinks</option>
+              <option value="Household">Household</option>
+              <option value="Personal care">Personal care</option>
+            </select>
+            <p class="error" id="category-error" hidden></p>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="buy-price">Buying price (KSh)</label>
+              <input
+                id="buy-price"
+                name="buyPrice"
+                type="number"
+                min="0"
+                step="0.01"
+              />
+              <p class="error" id="buy-price-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="sell-price">Selling price (KSh)</label>
+              <input
+                id="sell-price"
+                name="sellPrice"
+                type="number"
+                min="0"
+                step="0.01"
+              />
+              <p class="error" id="sell-price-error" hidden></p>
+            </div>
+          </div>
+
+          <div class="field-row">
+            <div class="field">
+              <label for="quantity">Quantity</label>
+              <input
+                id="quantity"
+                name="quantity"
+                type="number"
+                min="0"
+                step="1"
+              />
+              <p class="error" id="quantity-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label for="reorder-level">Reorder level</label>
+              <input
+                id="reorder-level"
+                name="reorderLevel"
+                type="number"
+                min="0"
+                step="1"
+              />
+              <p class="error" id="reorder-level-error" hidden></p>
+            </div>
+          </div>
+
+          <button type="submit" class="primary-button">Add product</button>
+        </form>
+      </section>
+
+      <!-- Inventory section -->
+      <section class="panel" aria-labelledby="inventory-heading">
+        <h2 id="inventory-heading">Inventory</h2>
+
+        <div class="controls">
+          <div class="field">
+            <label for="search">Search products</label>
+            <input
+              id="search"
+              type="search"
+              placeholder="Search by product name"
+            />
+          </div>
+
+          <!-- Stock filters -->
+          <div
+            class="filters"
+            role="group"
+            aria-label="Filter products by stock level"
+          >
+            <button type="button" class="filter-button" data-filter="all">
+              All
+            </button>
+            <button type="button" class="filter-button" data-filter="low">
+              Low stock
+            </button>
+          </div>
+
+          <!-- Category filters are created by JavaScript -->
+          <div
+            id="category-filters"
+            class="filters"
+            aria-label="Filter products by category"
+          ></div>
+        </div>
+
+        <!-- Empty state message -->
+        <p id="empty-message" class="empty-message" hidden></p>
+
+        <!-- Product cards are rendered here -->
+        <ul id="product-list" class="product-list"></ul>
+      </section>
+
+      <!-- Today's sales -->
+      <section class="panel" aria-labelledby="sales-heading">
+        <h2 id="sales-heading">Sales today</h2>
+        <p id="sales-today-message">No sales recorded today.</p>
+        <ul id="sales-list" class="sales-list"></ul>
+      </section>
+    </main>
+
+    <!-- Edit product dialog -->
+    <dialog id="edit-dialog" aria-labelledby="edit-title">
+      <form id="edit-form" novalidate>
+        <h2 id="edit-title">Edit product</h2>
+
+        <div class="field">
+          <label for="edit-name">Product name</label>
+          <input id="edit-name" name="name" type="text" />
+          <p class="error" id="edit-name-error" hidden></p>
+        </div>
+
+        <div class="field-row">
+          <div class="field">
+            <label for="edit-buy-price">Buying price (KSh)</label>
+            <input
+              id="edit-buy-price"
+              name="buyPrice"
+              type="number"
+              min="0"
+              step="0.01"
+            />
+            <p class="error" id="edit-buy-price-error" hidden></p>
+          </div>
+
+          <div class="field">
+            <label for="edit-sell-price">Selling price (KSh)</label>
+            <input
+              id="edit-sell-price"
+              name="sellPrice"
+              type="number"
+              min="0"
+              step="0.01"
+            />
+            <p class="error" id="edit-sell-price-error" hidden></p>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="edit-reorder-level">Reorder level</label>
+          <input
+            id="edit-reorder-level"
+            name="reorderLevel"
+            type="number"
+            min="0"
+            step="1"
+          />
+          <p class="error" id="edit-reorder-level-error" hidden></p>
+        </div>
+
+        <div class="dialog-actions">
+          <button type="button" class="secondary-button" id="cancel-edit">
+            Cancel
+          </button>
+          <button type="submit" class="primary-button">Save changes</button>
+        </div>
+      </form>
+    </dialog>
+
+    <!-- Product template: cloned for every product -->
+    <template id="product-template">
+      <li class="product-card" data-id="">
+        <div class="product-main">
+          <h3 class="product-name"></h3>
+          <p class="product-category"></p>
+          <p class="product-status"></p>
+        </div>
+
+        <dl class="product-details">
+          <div>
+            <dt>Selling price</dt>
+            <dd class="sell-price"></dd>
+          </div>
+
+          <div>
+            <dt>Quantity</dt>
+            <dd class="quantity"></dd>
+          </div>
+
+          <div>
+            <dt>Reorder level</dt>
+            <dd class="reorder-level"></dd>
+          </div>
+
+          <div>
+            <dt>Last restocked</dt>
+            <dd class="last-restocked"></dd>
+          </div>
+        </dl>
+
+        <div class="product-actions">
+          <button type="button" class="action-button sell-button">
+            Sell 1
+          </button>
+          <button type="button" class="action-button restock-button">
+            Restock
+          </button>
+          <button type="button" class="action-button edit-button">Edit</button>
+          <button type="button" class="action-button delete-button">
+            Delete
+          </button>
+        </div>
+      </li>
+    </template>
+
+    <script src="js/app.js"></script>
+  </body>
+</html>
