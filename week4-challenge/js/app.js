@@ -546,9 +546,14 @@ function deleteProduct(productId) {
  * Validates either the add-product form or edit-product form.
  * @param {HTMLFormElement} form
  * @param {number|null} currentProductId - Used to allow a product to keep its own name
+ * @param {boolean} isEditForm - True when validating the edit form
  * @returns {object|null} Valid form data, or null when there are errors
  */
-function validateProductForm(form, currentProductId = null) {
+function validateProductForm(
+  form,
+  currentProductId = null,
+  isEditForm = false,
+) {
   clearErrors(form);
 
   const formData = Object.fromEntries(new FormData(form));
@@ -578,8 +583,8 @@ function validateProductForm(form, currentProductId = null) {
     }
   }
 
-  // Category must be selected
-  if (!category) {
+  // Category is only required when adding a new product
+  if (!isEditForm && !category) {
     showError(form, "category", "Please choose a category.");
     errors.push("category");
   }
@@ -610,8 +615,8 @@ function validateProductForm(form, currentProductId = null) {
     errors.push("sell-price");
   }
 
-  // Quantity must be a whole number of 0 or more
-  if (!Number.isInteger(quantity) || quantity < 0) {
+  // Quantity is only required when adding a new product
+  if (!isEditForm && (!Number.isInteger(quantity) || quantity < 0)) {
     showError(
       form,
       "quantity",
@@ -1029,9 +1034,12 @@ function openEditDialog(productId) {
 elements.editForm.addEventListener("submit", (event) => {
   event.preventDefault();
 
+  // The third value, true, tells the function this is the edit form.
+  // It prevents validation of category and quantity.
   const formData = validateProductForm(
     elements.editForm,
     state.editingProductId,
+    true,
   );
 
   if (!formData) {
